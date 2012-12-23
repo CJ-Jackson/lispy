@@ -1,4 +1,4 @@
-# Lispy Systax System
+# Lispy Syntax System
 
 Simple, Elegant yet Extendible Syntax System.
 
