@@ -55,4 +55,4 @@ http://go.pkgdoc.org/github.com/CJ-Jackson/lispy
 
 ## Note ##
 
-Like HTML is suspectible to leakage when forgetting to close tag, unlike HTML it is sandboxed to a variable, while HTML is sandboxed to a page.  
+Like HTML it's is suspectible to leakage when forgetting to close tag, unlike HTML it is sandboxed to a variable, while HTML is sandboxed to a page.  
