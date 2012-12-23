@@ -6,6 +6,12 @@ Simple, Elegant yet Extendible Syntax System.
 
 	(tagname`content|attr1:value1|attr2:value2|etc:etc`)
 
+### Escapers ###
+
+	\| and  \:
+
+Note: Brackets '()' and Backticks '`' not do not need escaping, just don't match the syntax!
+
 ## Installation ##
 
 	go get github.com/CJ-Jackson/lispy
