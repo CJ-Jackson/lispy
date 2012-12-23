@@ -10,7 +10,7 @@ Simple, Elegant yet Extendible Syntax System.
 
 	\| and  \:
 
-Note: Brackets '()' and Backticks '`' not do not need escaping, just don't match the syntax!
+Note: Brackets '()' and Backticks '`' do not need escaping, just don't match the syntax!
 
 ## Installation ##
 
