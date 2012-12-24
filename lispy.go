@@ -99,6 +99,12 @@ func NewMap(lispymap LispyMap, lispyhandlermap LispyHandlerMap) *Lispy {
 	return li
 }
 
+// Copy
+func (li *Lispy) Copy() *Lispy {
+	return &Lispy{li.Name, li.Content, li.htmlEscape, li.restrictParam,
+		li.allowedNames, li.param, li.code, li.first, li.linebreak}
+}
+
 // Set Function
 func (li *Lispy) SetFunc(name string, function func(li *Lispy) string) {
 	li.code.Set(name, function)
