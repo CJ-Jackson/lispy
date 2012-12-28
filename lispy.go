@@ -475,8 +475,8 @@ func (li *Lispy) HtmlRender(htmlstr string) string {
 		"names": func() []string {
 			return li.GetNames()
 		},
-		"get": func(name string) string {
-			return li.Get(name)
+		"get": func(name string) html.HTML {
+			return li.Safe(li.Get(name))
 		},
 		"getint64": func(name string) int64 {
 			return li.GetInt64(name)
@@ -484,9 +484,9 @@ func (li *Lispy) HtmlRender(htmlstr string) string {
 		"getint": func(name string) int {
 			return li.GetInt(name)
 		},
-		"getdel": func(name string) string {
+		"getdel": func(name string) html.HTML {
 			defer li.Delete(name)
-			return li.Get(name)
+			return li.Safe(li.Get(name))
 		},
 		"getint64del": func(name string) int64 {
 			defer li.Delete(name)
@@ -563,6 +563,8 @@ func (li *Lispy) ContentAsInt64() int64 {
 }
 
 // Disable Automatic HTML Escape
+//
+// Note: It's recommended that you don't disable that!
 func (li *Lispy) DisableAutoEscape() {
 	li.htmlEscape = false
 }

@@ -121,4 +121,12 @@ func TestCommon(t *testing.T) {
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
+
+	code = "(p`Test \\|  Test|title:Test ' \\| ' test`)"
+	fmt.Println("Input:")
+	fmt.Println(code)
+	str = lisp.Parse(code)
+	fmt.Println("Output:")
+	fmt.Println(str)
+	fmt.Println()
 }
