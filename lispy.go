@@ -30,8 +30,9 @@ func (li lispyMap) Set(name string, function func(li *Lispy) string) {
 }
 
 func (li lispyMap) SetHandler(name string, lisperhandler LispyHandler) {
+	alisperhandler := lisperhandler
 	li.Set(name, func(li *Lispy) string {
-		return lisperhandler.Lispy(li)
+		return alisperhandler.Lispy(li)
 	})
 }
 
