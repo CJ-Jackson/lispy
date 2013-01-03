@@ -520,6 +520,9 @@ func (li *Lispy) HtmlRender(htmlstr string) string {
 		"safe": func(str string) html.HTML {
 			return li.Safe(str)
 		},
+		"attr": func(str string) html.HTMLAttr {
+			return html.HTMLAttr(str)
+		},
 	}
 
 	buf := &bytes.Buffer{}
