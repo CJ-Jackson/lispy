@@ -291,6 +291,11 @@ func (li *Lispy) Parse(str string) string {
 	li.first = previous.first
 	li.linebreak = previous.linebreak
 
+	if li.first {
+		processedStr = strings.Replace(processedStr, "&#124;", "|", -1)
+		processedStr = strings.Replace(processedStr, "&#58;", ":", -1)
+	}
+
 	return strings.TrimSpace(processedStr)
 }
 
