@@ -583,7 +583,7 @@ func (li *Lispy) EnableAutoLineBreak() {
 	li.linebreak = true
 }
 
-var noParams = []string{"javascript", "css"}
+var noParams = []string{"javascript", "css", "style"}
 
 func (li *Lispy) noParameters() bool {
 	for _, noParam := range noParams {

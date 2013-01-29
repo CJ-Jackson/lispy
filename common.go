@@ -75,3 +75,8 @@ func Canvas(li *Lispy) string {
 
 	return li.HtmlRender(htmlstr)
 }
+
+func ScriptFile(li *Lispy) string {
+	const htmlstr = `<script src="{{.Content}}"></script>`
+	return li.HtmlRender(htmlstr)
+}
