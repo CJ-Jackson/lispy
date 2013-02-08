@@ -108,8 +108,20 @@ func NewMap(lispymap LispyMap, lispyhandlermap LispyHandlerMap) *Lispy {
 
 // Copy
 func (li *Lispy) Copy() *Lispy {
-	return &Lispy{sync.RWMutex{}, li.Name, li.Content, li.htmlEscape, li.restrictParam,
-		li.allowedNames, li.param, li.code, li.first, li.linebreak}
+	li.RLock()
+	defer li.RUnlock()
+
+	allowedNames := []string{}
+	allowedNames = append(allowedNames, li.allowedNames...)
+
+	code := lispyMap{}
+
+	for key, function := range li.code {
+		code[key] = function
+	}
+
+	return &Lispy{sync.RWMutex{}, "", "", li.htmlEscape, li.restrictParam,
+		allowedNames, map[string][]string{}, code, li.first, li.linebreak}
 }
 
 // Set Function
@@ -193,13 +205,7 @@ func (li *Lispy) ParseSafe(str string) html.HTML {
 
 // Parse Syntax from String, returns parse String
 func (li *Lispy) Parse(str string) string {
-	if !li.first {
-		li = &Lispy{sync.RWMutex{}, "", "", li.htmlEscape, li.restrictParam, li.allowedNames,
-			map[string][]string{}, li.code, li.first, li.linebreak}
-	}
-
-	li.Lock()
-	defer li.Unlock()
+	li = li.Copy()
 
 	if li.code == nil {
 		return str
