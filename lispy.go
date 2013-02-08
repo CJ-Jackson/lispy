@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // (name`value`), (name`(name`value`)`), (name`content|key:value|key:value`)
@@ -59,6 +60,7 @@ func (li LispyHandlerMap) Set(name string, handle LispyHandler) {
 
 // Lispy Structure
 type Lispy struct {
+	sync.RWMutex
 	Name          string
 	Content       string
 	htmlEscape    bool
@@ -84,8 +86,12 @@ func New() *Lispy {
 		linebreak:     false,
 	}
 
-	li.AddFuncMap(Map)
-	li.AddHandlerMap(HandlerMap)
+	DefaultMap.RLock()
+
+	li.AddFuncMap(DefaultMap.Map)
+	li.AddHandlerMap(DefaultMap.HandlerMap)
+
+	DefaultMap.RUnlock()
 
 	return li
 }
@@ -102,7 +108,7 @@ func NewMap(lispymap LispyMap, lispyhandlermap LispyHandlerMap) *Lispy {
 
 // Copy
 func (li *Lispy) Copy() *Lispy {
-	return &Lispy{li.Name, li.Content, li.htmlEscape, li.restrictParam,
+	return &Lispy{sync.RWMutex{}, li.Name, li.Content, li.htmlEscape, li.restrictParam,
 		li.allowedNames, li.param, li.code, li.first, li.linebreak}
 }
 
@@ -188,9 +194,12 @@ func (li *Lispy) ParseSafe(str string) html.HTML {
 // Parse Syntax from String, returns parse String
 func (li *Lispy) Parse(str string) string {
 	if !li.first {
-		li = &Lispy{"", "", li.htmlEscape, li.restrictParam, li.allowedNames,
+		li = &Lispy{sync.RWMutex{}, "", "", li.htmlEscape, li.restrictParam, li.allowedNames,
 			map[string][]string{}, li.code, li.first, li.linebreak}
 	}
+
+	li.Lock()
+	defer li.Unlock()
 
 	if li.code == nil {
 		return str
@@ -583,10 +592,15 @@ func (li *Lispy) EnableAutoLineBreak() {
 	li.linebreak = true
 }
 
-var noParams = []string{"javascript", "css", "style"}
+var noParams = struct {
+	sync.RWMutex
+	s []string
+}{s: []string{"javascript", "css", "style"}}
 
 func (li *Lispy) noParameters() bool {
-	for _, noParam := range noParams {
+	noParams.RLock()
+	defer noParams.RUnlock()
+	for _, noParam := range noParams.s {
 		if li.Name == noParam {
 			return true
 		}
