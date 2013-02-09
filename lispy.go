@@ -117,7 +117,7 @@ func (li *Lispy) Copy() *Lispy {
 	code := lispyMap{}
 
 	for key, function := range li.code {
-		code[key] = function
+		code[key] = append(code[key], function...)
 	}
 
 	return &Lispy{sync.RWMutex{}, "", "", li.htmlEscape, li.restrictParam,
