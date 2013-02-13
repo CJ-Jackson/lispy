@@ -410,6 +410,27 @@ func (li *Lispy) parseParam() {
 		params = params[valuepos+1:]
 		li.Set(name, value)
 	}
+
+	li.filters()
+}
+
+func (li *Lispy) filters() {
+	filters := li.Get("~filters")
+	li.Delete("~filters")
+	if filters == "" {
+		return
+	}
+	for _, filter := range strings.Split(filters, ",") {
+		filter = strings.TrimSpace(filter)
+		switch filter {
+		case "line":
+			li.Content = strings.Replace(li.Content, "\r\n", "<br />", -1)
+			li.Content = strings.Replace(li.Content, "\r", "<br />", -1)
+			li.Content = strings.Replace(li.Content, "\n", "<br />", -1)
+		case "tab":
+			li.Content = strings.Replace(li.Content, "\t", "&nbsp;&nbsp;", -1)
+		}
+	}
 }
 
 // Set Parameter/Attribute
