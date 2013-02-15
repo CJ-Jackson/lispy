@@ -420,6 +420,9 @@ func (li *Lispy) filters() {
 	if filters == "" {
 		return
 	}
+	if li.restrictParam {
+		return
+	}
 	for _, filter := range strings.Split(filters, ",") {
 		filter = strings.TrimSpace(filter)
 		switch filter {
