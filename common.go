@@ -55,15 +55,15 @@ func Blanks(li *Lispy) string {
 }
 
 func JavaScript(li *Lispy) string {
-	const htmlstr = `<script type="text/javascript">%s</script>`
+	const htmlstr = `<script type="text/javascript">{{.Content|js_safe}}</script>`
 	li.Content = html.UnescapeString(li.Content)
-	return fmt.Sprintf(htmlstr, li.Content)
+	return li.HtmlRender(htmlstr)
 }
 
 func CSS(li *Lispy) string {
-	const htmlstr = `<style type="text/css" scoped>%s</style>`
+	const htmlstr = `<style type="text/css" scoped>{{.Content|css_safe}}</style>`
 	li.Content = html.UnescapeString(li.Content)
-	return fmt.Sprintf(htmlstr, li.Content)
+	return li.HtmlRender(htmlstr)
 }
 
 func Canvas(li *Lispy) string {
