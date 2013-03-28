@@ -206,6 +206,7 @@ func (li *Lispy) ParseSafe(str string) html.HTML {
 // Parse Syntax from String, returns parse String
 func (li *Lispy) Parse(str string) string {
 	li = li.Copy()
+	li.SetFunc("br", Br)
 
 	if li.code == nil {
 		return str
@@ -427,9 +428,9 @@ func (li *Lispy) filters() {
 		filter = strings.TrimSpace(filter)
 		switch filter {
 		case "line":
-			li.Content = strings.Replace(li.Content, "\r\n", "<br />", -1)
-			li.Content = strings.Replace(li.Content, "\r", "<br />", -1)
-			li.Content = strings.Replace(li.Content, "\n", "<br />", -1)
+			li.Content = strings.Replace(li.Content, "\r\n", "(br``)", -1)
+			li.Content = strings.Replace(li.Content, "\r", "(br``)", -1)
+			li.Content = strings.Replace(li.Content, "\n", "(br``)", -1)
 		case "tab":
 			li.Content = strings.Replace(li.Content, "\t", "&nbsp;&nbsp;", -1)
 		}
