@@ -126,11 +126,15 @@ func (li *Lispy) Copy() *Lispy {
 
 // Set Function
 func (li *Lispy) SetFunc(name string, function func(li *Lispy) string) {
+	li.RLock()
+	defer li.RUnlock()
 	li.code.Set(name, function)
 }
 
 // Set Handler
 func (li *Lispy) SetHandler(name string, lispyhandler LispyHandler) {
+	li.RLock()
+	defer li.RUnlock()
 	li.code.SetHandler(name, lispyhandler)
 }
 
@@ -141,7 +145,7 @@ func (li *Lispy) AddFuncMap(lispymap LispyMap) {
 	}
 
 	for name, function := range lispymap {
-		li.code.Set(name, function)
+		li.SetFunc(name, function)
 	}
 }
 
@@ -152,7 +156,7 @@ func (li *Lispy) AddHandlerMap(lispyhandlermap LispyHandlerMap) {
 	}
 
 	for name, lispyhandler := range lispyhandlermap {
-		li.code.SetHandler(name, lispyhandler)
+		li.SetHandler(name, lispyhandler)
 	}
 }
 
