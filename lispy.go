@@ -13,7 +13,7 @@ import (
 
 // (name`value`), (name`(name`value`)`), (name`content|key:value|key:value`)
 
-var openerRegExp = regexp.MustCompile("\\(([^`()]+?)`")
+var openerRegExp = regexp.MustCompile("\\(([\\p{L}\\p{N}-_]+?)`")
 
 const closerConst = "`)"
 
