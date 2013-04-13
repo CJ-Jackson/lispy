@@ -572,8 +572,8 @@ func (li *Lispy) HtmlRender(htmlstr string) string {
 		"css_safe": func(str string) html.CSS {
 			return html.CSS(str)
 		},
-		"js_safe": func(str string) html.CSS {
-			return html.CSS(str)
+		"js_safe": func(str string) html.JS {
+			return html.JS(str)
 		},
 		"attr": func(str string) html.HTMLAttr {
 			return html.HTMLAttr(str)
