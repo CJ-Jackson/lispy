@@ -14,7 +14,7 @@ Note: Brackets '()' and Backticks '`' do not need escaping, just don't match the
 
 ## Installation ##
 
-	go get github.com/CJ-Jackson/lispy
+	go get github.com/cj-jackson/lispy
 	
 ## Example ##
 
