@@ -43,7 +43,7 @@ Output:
 
 	func main() {
 		parser := lispy.New()
-		fmt.Print(parser.Parse("(p`Hello World!`)"))
+		fmt.Print(parser.Render("(p`Hello World!`)"))
 		// Output: <p>Hello World!</p>
 	}
 
