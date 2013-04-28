@@ -1,12 +1,12 @@
 package lispy
 
 func Video(li *Lispy) string {
-	const htmlstr = `<video{{if exist "src"}} src="{{getdel "src"}}"{{end}}{{if exist "poster"}} poster="{{getdel "poster"}}"{{end}}{{if exist "width"}} width="{{getdel "width"}}"{{end}}{{if exist "height"}} height="{{getdel "height"}}"{{end}}{{if existres "autoplay"}} autoplay{{end}}{{if existdel "controls"}} controls{{end}}{{if existres "loop"}} loop{{end}}{{if existdel "muted"}} muted{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</video>`
+	const htmlstr = `<video{{if exist "src"}} src="{{getdel "src"}}"{{end}}{{if exist "poster"}} poster="{{getdel "poster"}}"{{end}}{{if exist "width"}} width="{{getdel "width"}}"{{end}}{{if exist "height"}} height="{{getdel "height"}}"{{end}}{{if existres "autoplay"}} autoplay{{end}}{{if existdel "controls"}} controls{{end}}{{if existres "loop"}} loop{{end}}{{if existdel "muted"}} muted{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</video>`
 	return li.HtmlRender(htmlstr)
 }
 
 func Audio(li *Lispy) string {
-	const htmlstr = `<audio{{if exist "src"}} src="{{getdel "src"}}"{{end}}{{if existres "autoplay"}} autoplay{{end}}{{if existdel "controls"}} controls{{end}}{{if existres "loop"}} loop{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</audio>`
+	const htmlstr = `<audio{{if exist "src"}} src="{{getdel "src"}}"{{end}}{{if existres "autoplay"}} autoplay{{end}}{{if existdel "controls"}} controls{{end}}{{if existres "loop"}} loop{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</audio>`
 	return li.HtmlRender(htmlstr)
 }
 

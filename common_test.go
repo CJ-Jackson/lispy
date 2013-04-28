@@ -13,7 +13,7 @@ func TestCommon(t *testing.T) {
 	code := "(p`Hello World!`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str := lisp.Parse(code)
+	str := lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -21,7 +21,7 @@ func TestCommon(t *testing.T) {
 	code = "(p`(p`Hello World!`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -29,7 +29,7 @@ func TestCommon(t *testing.T) {
 	code = "(p`(p`Hello World!|class:lisp`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -37,7 +37,7 @@ func TestCommon(t *testing.T) {
 	code = "(p`(img`http://example.com/img.png`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -45,7 +45,7 @@ func TestCommon(t *testing.T) {
 	code = "(p`(img`http://example.com/img.png"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -53,7 +53,7 @@ func TestCommon(t *testing.T) {
 	code = "(p`(a`(img`http://example.com/img.png`)|href:http://example.com`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -61,7 +61,7 @@ func TestCommon(t *testing.T) {
 	code = "(div`Hello World!`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -69,7 +69,7 @@ func TestCommon(t *testing.T) {
 	code = "(span`Hello World!`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -77,7 +77,7 @@ func TestCommon(t *testing.T) {
 	code = "(span`Hello World!|hello:world`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -85,7 +85,7 @@ func TestCommon(t *testing.T) {
 	code = "(col`Hello World!|span:world`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -93,7 +93,7 @@ func TestCommon(t *testing.T) {
 	code = "(blockquote`Hello World!|cite:world`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -101,7 +101,7 @@ func TestCommon(t *testing.T) {
 	code = "(li`Hello World!|value:world`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -109,7 +109,7 @@ func TestCommon(t *testing.T) {
 	code = "(blockquote`(blockquote`Hello World!|cite:world`)|cite:world`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -117,7 +117,7 @@ func TestCommon(t *testing.T) {
 	code = "(abbr`Hello World!|title:world`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -125,7 +125,7 @@ func TestCommon(t *testing.T) {
 	code = "(p`Test \\|  Test|title:Test ' \\| ' test`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()

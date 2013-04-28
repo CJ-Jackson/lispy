@@ -13,7 +13,7 @@ func TestWbr(t *testing.T) {
 	code := "(wbr``)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str := lisp.Parse(code)
+	str := lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()

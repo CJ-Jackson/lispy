@@ -19,26 +19,23 @@ const closerConst = "`)"
 
 var closerRegExp = regexp.MustCompile("`\\)")
 
-type lispyMap map[string][]func(li *Lispy) string
+type lispyMap map[string][]LispyHandler
 
-func (li lispyMap) Set(name string, function func(li *Lispy) string) {
+func (li lispyMap) Set(name string, function LispyFunc) {
+	li.SetHandler(name, function)
+}
+
+func (li lispyMap) SetHandler(name string, lispyhandler LispyHandler) {
 	name = strings.TrimSpace(strings.ToLower(name))
 	if len(li[name]) <= 0 {
-		li[name] = append(li[name], function)
+		li[name] = append(li[name], lispyhandler)
 	} else {
-		li[name][0] = function
+		li[name][0] = lispyhandler
 	}
 }
 
-func (li lispyMap) SetHandler(name string, lisperhandler LispyHandler) {
-	alisperhandler := lisperhandler
-	li.Set(name, func(li *Lispy) string {
-		return alisperhandler.Lispy(li)
-	})
-}
-
 // Lispy Map
-type LispyMap map[string]func(li *Lispy) string
+type LispyMap map[string]LispyFunc
 
 // Setter
 func (li LispyMap) Set(name string, function func(li *Lispy) string) {
@@ -47,7 +44,7 @@ func (li LispyMap) Set(name string, function func(li *Lispy) string) {
 
 // Lispy Handler Interface
 type LispyHandler interface {
-	Lispy(li *Lispy) string
+	Lispy(*Lispy) string
 }
 
 // Lispy Handler Map
@@ -56,6 +53,12 @@ type LispyHandlerMap map[string]LispyHandler
 // Setter
 func (li LispyHandlerMap) Set(name string, handle LispyHandler) {
 	li[name] = handle
+}
+
+type LispyFunc func(*Lispy) string
+
+func (li LispyFunc) Lispy(lii *Lispy) string {
+	return li(lii)
 }
 
 // Lispy Structure
@@ -88,20 +91,9 @@ func New() *Lispy {
 
 	DefaultMap.RLock()
 
-	li.AddFuncMap(DefaultMap.Map)
-	li.AddHandlerMap(DefaultMap.HandlerMap)
+	li.AddFuncMap(DefaultMap.Map).AddHandlerMap(DefaultMap.HandlerMap)
 
 	DefaultMap.RUnlock()
-
-	return li
-}
-
-// Construct with Default and Specified Map
-func NewMap(lispymap LispyMap, lispyhandlermap LispyHandlerMap) *Lispy {
-	li := New()
-
-	li.AddFuncMap(lispymap)
-	li.AddHandlerMap(lispyhandlermap)
 
 	return li
 }
@@ -125,39 +117,43 @@ func (li *Lispy) Copy() *Lispy {
 }
 
 // Set Function
-func (li *Lispy) SetFunc(name string, function func(li *Lispy) string) {
+func (li *Lispy) SetFunc(name string, function LispyFunc) *Lispy {
 	li.RLock()
 	defer li.RUnlock()
 	li.code.Set(name, function)
+	return li
 }
 
 // Set Handler
-func (li *Lispy) SetHandler(name string, lispyhandler LispyHandler) {
+func (li *Lispy) SetHandler(name string, lispyhandler LispyHandler) *Lispy {
 	li.RLock()
 	defer li.RUnlock()
 	li.code.SetHandler(name, lispyhandler)
+	return li
 }
 
 // Add Function Map
-func (li *Lispy) AddFuncMap(lispymap LispyMap) {
+func (li *Lispy) AddFuncMap(lispymap LispyMap) *Lispy {
 	if lispymap == nil {
-		return
+		return li
 	}
 
 	for name, function := range lispymap {
 		li.SetFunc(name, function)
 	}
+	return li
 }
 
 // Add Handler Map
-func (li *Lispy) AddHandlerMap(lispyhandlermap LispyHandlerMap) {
+func (li *Lispy) AddHandlerMap(lispyhandlermap LispyHandlerMap) *Lispy {
 	if lispyhandlermap == nil {
-		return
+		return li
 	}
 
 	for name, lispyhandler := range lispyhandlermap {
 		li.SetHandler(name, lispyhandler)
 	}
+	return li
 }
 
 // Make string as safe!
@@ -202,13 +198,13 @@ func (op openclosers) Swap(i, j int) {
 	op[i], op[j] = op[j], op[i]
 }
 
-// Alais of Parse, but marks the string as safe!
-func (li *Lispy) ParseSafe(str string) html.HTML {
-	return li.Safe(li.Parse(str))
+// Alais of Render, but marks the string as safe!
+func (li *Lispy) RenderSafe(str string) html.HTML {
+	return li.Safe(li.Render(str))
 }
 
-// Parse Syntax from String, returns parse String
-func (li *Lispy) Parse(str string) string {
+// Render Syntax from String, returns rendered String
+func (li *Lispy) Render(str string) string {
 	li = li.Copy()
 	li.SetFunc("br", Br)
 
@@ -288,10 +284,10 @@ func (li *Lispy) Parse(str string) string {
 		if len(li.code[li.Name]) <= 0 || !li.nameAllowed() {
 			processedStr += str[:pos] + li.Content
 		} else if li.noParameters() {
-			processedStr += str[:pos] + li.code[li.Name][0](li)
+			processedStr += str[:pos] + li.code[li.Name][0].Lispy(li)
 		} else {
 			li.parseParam()
-			processedStr += str[:pos] + li.code[li.Name][0](li)
+			processedStr += str[:pos] + li.code[li.Name][0].Lispy(li)
 			li.param = map[string][]string{}
 		}
 
@@ -560,11 +556,11 @@ func (li *Lispy) HtmlRender(htmlstr string) string {
 			}
 			return li.Exist(name)
 		},
-		"parse": func(str string) html.HTML {
-			return li.ParseSafe(str)
+		"render": func(str string) html.HTML {
+			return li.RenderSafe(str)
 		},
-		"parseunsafe": func(str string) string {
-			return li.Parse(str)
+		"renderunsafe": func(str string) string {
+			return li.Render(str)
 		},
 		"safe": func(str string) html.HTML {
 			return li.Safe(str)

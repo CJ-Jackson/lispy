@@ -13,7 +13,7 @@ func TestImg(t *testing.T) {
 	code := "(img`http://example.com/img.png`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str := lisp.Parse(code)
+	str := lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -21,7 +21,7 @@ func TestImg(t *testing.T) {
 	code = "(a`(img`http://example.com/img.png`)|href:http://example.com`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()

@@ -1,7 +1,7 @@
 package lispy
 
 func Object(li *Lispy) string {
-	const htmlstr = `<object{{if exist "width"}} width="{{getdel "width"}}"{{end}}{{if exist "height"}} height="{{getdel "height"}}"{{end}}{{if exist "data"}} data="{{getdel "data"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</object>`
+	const htmlstr = `<object{{if exist "width"}} width="{{getdel "width"}}"{{end}}{{if exist "height"}} height="{{getdel "height"}}"{{end}}{{if exist "data"}} data="{{getdel "data"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</object>`
 	return li.HtmlRender(htmlstr)
 }
 

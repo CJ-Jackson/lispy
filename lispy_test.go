@@ -13,7 +13,7 @@ func TestLispCode(t *testing.T) {
 	code := "(hello`world`) (Hello World)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str := lisp.Parse(code)
+	str := lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -25,7 +25,7 @@ func TestLispCode(t *testing.T) {
 	code = "(hello``)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -37,7 +37,7 @@ func TestLispCode(t *testing.T) {
 	code = "(hello`(hello`world`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -49,7 +49,7 @@ func TestLispCode(t *testing.T) {
 	code = "(hello`(hello`(hello`world`)`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -61,7 +61,7 @@ func TestLispCode(t *testing.T) {
 	code = "(hello`world|key:value`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -73,7 +73,7 @@ func TestLispCode(t *testing.T) {
 	code = "(hello`world|key:value"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -85,7 +85,7 @@ func TestLispCode(t *testing.T) {
 	code = "(hello`(hello`world|key:value"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -97,7 +97,7 @@ func TestLispCode(t *testing.T) {
 	code = "<test />"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -108,7 +108,7 @@ func TestLispCode(t *testing.T) {
 
 	lisp.DisableAutoEscape()
 
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 
 	if str != "<test />" {
 		t.Fail()
@@ -119,7 +119,7 @@ func TestLispCode(t *testing.T) {
 	code = "hello\r\n\r\n"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()

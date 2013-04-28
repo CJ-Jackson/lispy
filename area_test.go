@@ -15,7 +15,7 @@ func TestArea(t *testing.T) {
 	code += "(area`circle|coords:124,58,8|href:venus.htm|alt:Venus`)`)\r\n"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str := lisp.Parse(code)
+	str := lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()

@@ -1,7 +1,7 @@
 package lispy
 
 func A(li *Lispy) string {
-	const htmlstr = `<a href="{{getdel "href"}}"{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</a>`
+	const htmlstr = `<a href="{{getdel "href"}}"{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</a>`
 
 	if !li.Exist("href") {
 		li.Set("href", li.Content)
@@ -11,7 +11,7 @@ func A(li *Lispy) string {
 }
 
 func ANoFollow(li *Lispy) string {
-	const htmlstr = `<a href="{{getdel "href"}}" rel="nofollow"{{range names}} {{.}}="{{get .}}"{{end}}>{{.Content|parse}}</a>`
+	const htmlstr = `<a href="{{getdel "href"}}" rel="nofollow"{{range names}} {{.}}="{{get .}}"{{end}}>{{.Content|render}}</a>`
 
 	if !li.Exist("href") {
 		li.Set("href", li.Content)

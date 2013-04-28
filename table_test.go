@@ -14,7 +14,7 @@ func TestTable(t *testing.T) {
 	code := "(table`(tr`(th`hello`)(th`world`)`)(tr`(td`hello`)(td`world|colspan:2`)`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str := lisp.Parse(code)
+	str := lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -22,7 +22,7 @@ func TestTable(t *testing.T) {
 	code = "(table`(tr`(th`hello`)(th`world`)`)(tr`(td`hello`)(td`world|colspan:2`)`)`) (table`(tr`(th`hello`)(th`world`)`)(tr`(td`hello`)(td`world|colspan:2`)`)`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()

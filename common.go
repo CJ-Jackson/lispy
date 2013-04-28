@@ -6,47 +6,47 @@ import (
 )
 
 func Common(li *Lispy) string {
-	const htmlstr = `<%s{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonValue(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "value"}} value="{{getdel "value"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "value"}} value="{{getdel "value"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonName(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonCite(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "cite"}} cite="{{getdel "cite"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "cite"}} cite="{{getdel "cite"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonTitle(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "title"}} title="{{getdel "title"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "title"}} title="{{getdel "title"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonSpan(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "span"}} span="{{getdel "span"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "span"}} span="{{getdel "span"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonDir(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "dir"}} dir="{{getdel "dir"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "dir"}} dir="{{getdel "dir"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonCiteDateTime(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "cite"}} cite="{{getdel "cite"}}"{{end}}{{if exist "datetime"}} datetime="{{getdel "datetime"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "cite"}} cite="{{getdel "cite"}}"{{end}}{{if exist "datetime"}} datetime="{{getdel "datetime"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 
 func CommonSrc(li *Lispy) string {
-	const htmlstr = `<%s{{if exist "src"}} src="{{getdel "src"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|parse}}</%s>`
+	const htmlstr = `<%s{{if exist "src"}} src="{{getdel "src"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }
 

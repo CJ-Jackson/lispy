@@ -13,7 +13,7 @@ func TestObject(t *testing.T) {
 	code := "(object`(param`|name:autoplay|value:true`)|data:horse.wav`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str := lisp.Parse(code)
+	str := lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
@@ -21,7 +21,7 @@ func TestObject(t *testing.T) {
 	code = "(embed`helloworld.swf`)"
 	fmt.Println("Input:")
 	fmt.Println(code)
-	str = lisp.Parse(code)
+	str = lisp.Render(code)
 	fmt.Println("Output:")
 	fmt.Println(str)
 	fmt.Println()
