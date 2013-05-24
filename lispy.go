@@ -118,6 +118,7 @@ func (li *Lispy) Copy() *Lispy {
 	newli.code = code
 	newli.allowedNames = allowedNames
 	newli.RWMutex = sync.RWMutex{}
+	newli.param = map[string][]string{}
 
 	return newli
 }
