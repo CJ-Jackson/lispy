@@ -290,6 +290,9 @@ func (li *Lispy) Render(str string) string {
 
 		li.Content = li.Content[:content_lenght]
 
+		li.Content = strings.Replace(li.Content, `\|`, "&#124;", -1)
+		li.Content = strings.Replace(li.Content, `\:`, "&#58;", -1)
+
 		if len(li.code[li.Name]) <= 0 || !li.nameAllowed() {
 			processedStr += str[:pos] + li.Content
 		} else {
@@ -387,9 +390,6 @@ func (li *Lispy) parseParam() {
 	}
 	li.paramParsed = true
 	li.Content = strings.TrimSpace(li.Content)
-
-	li.Content = strings.Replace(li.Content, `\|`, "&#124;", -1)
-	li.Content = strings.Replace(li.Content, `\:`, "&#58;", -1)
 
 	pos := li.parseParamExt(li.Content, '|')
 
