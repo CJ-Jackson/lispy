@@ -73,6 +73,7 @@ type Lispy struct {
 	code          lispyMap
 	first         bool
 	linebreak     bool
+	paramParsed   bool
 }
 
 // Construct with Default Map
@@ -87,6 +88,7 @@ func New() *Lispy {
 		code:          lispyMap{},
 		first:         true,
 		linebreak:     false,
+		paramParsed:   false,
 	}
 
 	DefaultMap.RLock()
@@ -113,7 +115,7 @@ func (li *Lispy) Copy() *Lispy {
 	}
 
 	return &Lispy{sync.RWMutex{}, "", "", li.htmlEscape, li.restrictParam,
-		allowedNames, map[string][]string{}, code, li.first, li.linebreak}
+		allowedNames, map[string][]string{}, code, li.first, li.linebreak, li.paramParsed}
 }
 
 // Set Function
@@ -279,14 +281,13 @@ func (li *Lispy) Render(str string) string {
 			}
 		}
 
+		li.paramParsed = false
+
 		li.Content = li.Content[:content_lenght]
 
 		if len(li.code[li.Name]) <= 0 || !li.nameAllowed() {
 			processedStr += str[:pos] + li.Content
-		} else if li.noParameters() {
-			processedStr += str[:pos] + li.code[li.Name][0].Lispy(li)
 		} else {
-			li.parseParam()
 			processedStr += str[:pos] + li.code[li.Name][0].Lispy(li)
 			li.param = map[string][]string{}
 		}
@@ -372,6 +373,10 @@ func (li *Lispy) parseParamExt(acontent string, sep uint8) int {
 }
 
 func (li *Lispy) parseParam() {
+	if li.paramParsed {
+		return
+	}
+	li.paramParsed = true
 	li.Content = strings.TrimSpace(li.Content)
 
 	li.Content = strings.Replace(li.Content, `\|`, "&#124;", -1)
@@ -479,10 +484,7 @@ func (li *Lispy) GetInt(name string) int {
 
 // Check for existant of Parameter/Attribute
 func (li *Lispy) Exist(name string) bool {
-	if li.param == nil {
-		return false
-	}
-
+	li.parseParam()
 	if len(li.param[name]) <= 0 {
 		return false
 	}
@@ -501,7 +503,8 @@ func (li *Lispy) Delete(name string) {
 //
 // Note: Does not operate while Parameter/Attribute has been Restricted.
 func (li *Lispy) GetNames() []string {
-	if li.param == nil || li.restrictParam {
+	li.parseParam()
+	if li.restrictParam {
 		return []string{}
 	}
 
@@ -627,20 +630,4 @@ func (li *Lispy) DisableAutoEscape() {
 // Enable Automatic Line Break, useful for comment system.
 func (li *Lispy) EnableAutoLineBreak() {
 	li.linebreak = true
-}
-
-var noParams = struct {
-	sync.RWMutex
-	s []string
-}{s: []string{"javascript", "css", "style"}}
-
-func (li *Lispy) noParameters() bool {
-	noParams.RLock()
-	defer noParams.RUnlock()
-	for _, noParam := range noParams.s {
-		if li.Name == noParam {
-			return true
-		}
-	}
-	return false
 }
