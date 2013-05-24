@@ -3,6 +3,7 @@ package lispy
 
 import (
 	"bytes"
+	_html "html"
 	html "html/template"
 	"regexp"
 	"sort"
@@ -477,6 +478,11 @@ func (li *Lispy) Get(name string) string {
 	return li.param[name][0]
 }
 
+// Get Raw Parameter/Attribute (Unescaped)
+func (li *Lispy) GetRaw(name string) string {
+	return _html.UnescapeString(li.Get(name))
+}
+
 // Get Parameter/Attribute as Int64, return 0 on fail!
 func (li *Lispy) GetInt64(name string) int64 {
 	num, err := strconv.ParseInt(li.Get(name), 10, 64)
@@ -639,4 +645,9 @@ func (li *Lispy) DisableAutoEscape() {
 // Enable Automatic Line Break, useful for comment system.
 func (li *Lispy) EnableAutoLineBreak() {
 	li.linebreak = true
+}
+
+// Unescaped Content
+func (li *Lispy) RawContent() string {
+	return _html.UnescapeString(li.Content)
 }
