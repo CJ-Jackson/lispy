@@ -377,6 +377,10 @@ func (li *Lispy) parseParamExt(acontent string, sep uint8) int {
 	return pos
 }
 
+func (li *Lispy) ParseParam() {
+	li.parseParam()
+}
+
 func (li *Lispy) parseParam() {
 	if li.paramParsed {
 		return
