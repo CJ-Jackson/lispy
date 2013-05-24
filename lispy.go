@@ -117,6 +117,7 @@ func (li *Lispy) Copy() *Lispy {
 	*newli = *li
 	newli.code = code
 	newli.allowedNames = allowedNames
+	newli.RWMutex = sync.RWMutex{}
 
 	return newli
 }
