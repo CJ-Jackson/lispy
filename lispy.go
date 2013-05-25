@@ -224,10 +224,6 @@ func (li *Lispy) Render(str string) string {
 
 	previous := previousState{li.htmlEscape, li.first, li.linebreak}
 
-	if li.first {
-		li.first = false
-	}
-
 	if li.htmlEscape {
 		str = html.HTMLEscapeString(str)
 		li.htmlEscape = false
@@ -238,6 +234,12 @@ func (li *Lispy) Render(str string) string {
 		str = strings.Replace(str, "\r", "<br />", -1)
 		str = strings.Replace(str, "\n", "<br />", -1)
 		li.linebreak = false
+	}
+
+	if li.first {
+		str = strings.Replace(str, `\|`, "&#124;", -1)
+		str = strings.Replace(str, `\:`, "&#58;", -1)
+		li.first = false
 	}
 
 	processedStr := ""
@@ -292,9 +294,6 @@ func (li *Lispy) Render(str string) string {
 		li.paramParsed = false
 
 		li.Content = li.Content[:content_lenght]
-
-		li.Content = strings.Replace(li.Content, `\|`, "&#124;", -1)
-		li.Content = strings.Replace(li.Content, `\:`, "&#58;", -1)
 
 		if len(li.code[li.Name]) <= 0 || !li.nameAllowed() {
 			processedStr += str[:pos] + li.Content
