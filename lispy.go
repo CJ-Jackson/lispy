@@ -1,4 +1,4 @@
-// Simple, Elegant yet Extendible Syntax System. (p`Hello World in Paragraph!`)
+// Simple, Elegant yet Extendible Syntax System. (p:Hello World in Paragraph!)
 package lispy
 
 import (
@@ -12,7 +12,7 @@ import (
 	"sync"
 )
 
-// (name`value`), (name`(name`value`)`), (name`content|key:value|key:value`)
+// (name:value), (name:(name:value)), (name:content|key:value|key:value)
 
 var starterRegExp = regexp.MustCompile(`\(([\p{L}\p{N}-_]+?):`)
 
