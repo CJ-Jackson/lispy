@@ -11,6 +11,7 @@ var DefaultMap = struct {
 }{
 	Map: LispyMap{
 		"--":         Blanks,
+		"_":          Escape,
 		"a":          A,
 		"abbr":       CommonTitle,
 		"address":    Common,

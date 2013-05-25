@@ -2,7 +2,6 @@ package lispy
 
 import (
 	"fmt"
-	"html"
 )
 
 func Common(li *Lispy) string {
@@ -56,13 +55,13 @@ func Blanks(li *Lispy) string {
 
 func JavaScript(li *Lispy) string {
 	const htmlstr = `<script type="text/javascript">{{.Content|js_safe}}</script>`
-	li.Content = html.UnescapeString(li.Content)
+	li.Content = li.RawContent()
 	return li.HtmlRender(htmlstr)
 }
 
 func CSS(li *Lispy) string {
 	const htmlstr = `<style type="text/css" scoped>{{.Content|css_safe}}</style>`
-	li.Content = html.UnescapeString(li.Content)
+	li.Content = li.RawContent()
 	return li.HtmlRender(htmlstr)
 }
 
@@ -79,4 +78,8 @@ func Canvas(li *Lispy) string {
 func ScriptFile(li *Lispy) string {
 	const htmlstr = `<script src="{{.Content}}"></script>`
 	return li.HtmlRender(htmlstr)
+}
+
+func Escape(li *Lispy) string {
+	return li.Render(li.Content)
 }
