@@ -4,13 +4,13 @@ Simple, Elegant yet Extendible Syntax System.
 
 ## Syntax ##
 
-	(tagname`content|attr1:value1|attr2:value2|etc:etc`)
+	(tagname:content|attr1:value1|attr2:value2|etc:etc)
 
 ### Escapers ###
 
 	\| and  \:
 
-Note: Brackets '()' and Backticks '`' do not need escaping, just don't match the syntax!
+Note: Brackets '()' do not need escaping, just don't match the syntax!
 
 ## Installation ##
 
@@ -18,11 +18,11 @@ Note: Brackets '()' and Backticks '`' do not need escaping, just don't match the
 	
 ## Example ##
 
-	(video`(source`forrest_gump.mp4|type:video/mp4`)
-		(source`forrest_gump.ogg|type:video/ogg`)
-		(track`subtitles_en.vtt|kind:subtitles|srclang:en|label:English`)
-		(track`subtitles_no.vtt|kind:subtitles|srclang:no|label:Norwegian`)
-	|width:320|height:240|controls:`)
+	(video:(source:forrest_gump.mp4|type:video/mp4)
+		(source:forrest_gump.ogg|type:video/ogg)
+		(track:subtitles_en.vtt|kind:subtitles|srclang:en|label:English)
+		(track:subtitles_no.vtt|kind:subtitles|srclang:no|label:Norwegian)
+	|width:320|height:240|controls:)
 
 Output:
 
@@ -43,7 +43,7 @@ Output:
 
 	func main() {
 		parser := lispy.New()
-		fmt.Print(parser.Render("(p`Hello World!`)"))
+		fmt.Print(parser.Render("(p:Hello World!)"))
 		// Output: <p>Hello World!</p>
 	}
 

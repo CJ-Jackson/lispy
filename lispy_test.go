@@ -10,7 +10,7 @@ func TestLispCode(t *testing.T) {
 	fmt.Println()
 
 	lisp := New()
-	code := "(hello`world`) (Hello World)"
+	code := "(hello:world) (Hello World)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str := lisp.Render(code)
@@ -22,7 +22,7 @@ func TestLispCode(t *testing.T) {
 		t.Fail()
 	}
 
-	code = "(hello``)"
+	code = "(hello:)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
@@ -34,7 +34,7 @@ func TestLispCode(t *testing.T) {
 		t.Fail()
 	}
 
-	code = "(hello`(hello`world`)`)"
+	code = "(hello:(hello:world))"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
@@ -42,11 +42,11 @@ func TestLispCode(t *testing.T) {
 	fmt.Println(str)
 	fmt.Println()
 
-	if str != "(hello`world`)" {
+	if str != "(hello:world)" {
 		t.Fail()
 	}
 
-	code = "(hello`(hello`(hello`world`)`)`)"
+	code = "(hello:(hello:(hello:world)))"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
@@ -54,11 +54,11 @@ func TestLispCode(t *testing.T) {
 	fmt.Println(str)
 	fmt.Println()
 
-	if str != "(hello`(hello`world`)`)" {
+	if str != "(hello:(hello:world))" {
 		t.Fail()
 	}
 
-	code = "(hello`world|key:value`)"
+	code = "(hello:world|key:value)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
@@ -70,7 +70,7 @@ func TestLispCode(t *testing.T) {
 		t.Fail()
 	}
 
-	code = "(hello`world|key:value"
+	code = "(hello:world|key:value"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
@@ -82,7 +82,7 @@ func TestLispCode(t *testing.T) {
 		t.Fail()
 	}
 
-	code = "(hello`(hello`world|key:value"
+	code = "(hello:(hello:world|key:value"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
@@ -90,7 +90,7 @@ func TestLispCode(t *testing.T) {
 	fmt.Println(str)
 	fmt.Println()
 
-	if str != "(hello`world|key:value" {
+	if str != "(hello:world|key:value" {
 		t.Fail()
 	}
 

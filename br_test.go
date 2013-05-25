@@ -10,7 +10,7 @@ func TestBr(t *testing.T) {
 	fmt.Println()
 
 	lisp := New()
-	code := "(br``)"
+	code := "(br:)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str := lisp.Render(code)
@@ -18,7 +18,7 @@ func TestBr(t *testing.T) {
 	fmt.Println(str)
 	fmt.Println()
 
-	code = "(br`5`)"
+	code = "(br:5)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)

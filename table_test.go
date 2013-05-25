@@ -11,7 +11,7 @@ func TestTable(t *testing.T) {
 
 	lisp := New()
 
-	code := "(table`(tr`(th`hello`)(th`world`)`)(tr`(td`hello`)(td`world|colspan:2`)`)`)"
+	code := "(table:(tr:(th:hello)(th:world))(tr:(td:hello)(td:world|colspan:2)))"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str := lisp.Render(code)
@@ -19,7 +19,7 @@ func TestTable(t *testing.T) {
 	fmt.Println(str)
 	fmt.Println()
 
-	code = "(table`(tr`(th`hello`)(th`world`)`)(tr`(td`hello`)(td`world|colspan:2`)`)`) (table`(tr`(th`hello`)(th`world`)`)(tr`(td`hello`)(td`world|colspan:2`)`)`)"
+	code = "(table:(tr:(th:hello)(th:world))(tr:(td:hello)(td:world|colspan:2))) (table:(tr:(th:hello)(th:world))(tr:(td:hello)(td:world|colspan:2)))"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)

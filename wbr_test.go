@@ -10,7 +10,7 @@ func TestWbr(t *testing.T) {
 	fmt.Println()
 
 	lisp := New()
-	code := "(wbr``)"
+	code := "(wbr:)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str := lisp.Render(code)

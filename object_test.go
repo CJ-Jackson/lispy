@@ -10,7 +10,7 @@ func TestObject(t *testing.T) {
 	fmt.Println()
 
 	lisp := New()
-	code := "(object`(param`|name:autoplay|value:true`)|data:horse.wav`)"
+	code := "(object:(param:|name:autoplay|value:true)|data:horse.wav)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str := lisp.Render(code)
@@ -18,7 +18,7 @@ func TestObject(t *testing.T) {
 	fmt.Println(str)
 	fmt.Println()
 
-	code = "(embed`helloworld.swf`)"
+	code = "(embed:helloworld.swf)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)

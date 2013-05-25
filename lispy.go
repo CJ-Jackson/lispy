@@ -14,11 +14,13 @@ import (
 
 // (name`value`), (name`(name`value`)`), (name`content|key:value|key:value`)
 
-var openerRegExp = regexp.MustCompile("\\(([\\p{L}\\p{N}-_]+?)`")
+var starterRegExp = regexp.MustCompile(`\(([\p{L}\p{N}-_]+?):`)
 
-const closerConst = "`)"
+var openerRegExp = regexp.MustCompile(`\(`)
 
-var closerRegExp = regexp.MustCompile("`\\)")
+const closerConst = ")"
+
+var closerRegExp = regexp.MustCompile(`\)`)
 
 type lispyMap map[string][]LispyHandler
 
@@ -241,7 +243,7 @@ func (li *Lispy) Render(str string) string {
 	processedStr := ""
 
 	for {
-		index := openerRegExp.FindStringIndex(str)
+		index := starterRegExp.FindStringIndex(str)
 		if index == nil {
 			processedStr += str
 			break
@@ -249,7 +251,7 @@ func (li *Lispy) Render(str string) string {
 
 		pos := index[0]
 
-		submatch := openerRegExp.FindStringSubmatch(str)
+		submatch := starterRegExp.FindStringSubmatch(str)
 		lenght := len(submatch[0])
 		li.Name = strings.ToLower(submatch[1])
 
@@ -443,9 +445,9 @@ func (li *Lispy) filters() {
 		filter = strings.TrimSpace(filter)
 		switch filter {
 		case "line":
-			li.Content = strings.Replace(li.Content, "\r\n", "(br``)", -1)
-			li.Content = strings.Replace(li.Content, "\r", "(br``)", -1)
-			li.Content = strings.Replace(li.Content, "\n", "(br``)", -1)
+			li.Content = strings.Replace(li.Content, "\r\n", "(br:)", -1)
+			li.Content = strings.Replace(li.Content, "\r", "(br:)", -1)
+			li.Content = strings.Replace(li.Content, "\n", "(br:)", -1)
 		case "tab":
 			li.Content = strings.Replace(li.Content, "\t", "&nbsp;&nbsp;", -1)
 		}

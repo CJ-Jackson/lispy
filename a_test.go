@@ -10,7 +10,7 @@ func TestA(t *testing.T) {
 	fmt.Println()
 
 	lisp := New()
-	code := "(a`http://example.com`)"
+	code := "(a:http://example.com)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str := lisp.Render(code)
@@ -19,7 +19,7 @@ func TestA(t *testing.T) {
 	fmt.Println()
 
 	lisp = New()
-	code = "(a`Hello World!|href:http://example.com`)"
+	code = "(a:Hello World!|href:http://example.com)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
@@ -28,7 +28,7 @@ func TestA(t *testing.T) {
 	fmt.Println()
 
 	lisp = New()
-	code = "(a`Hello World!|href:http://example.com`) (a`Hello World!|href:http://example.com`)"
+	code = "(a:Hello World!|href:http://example.com) (a:Hello World!|href:http://example.com)"
 	fmt.Println("Input:")
 	fmt.Println(code)
 	str = lisp.Render(code)
