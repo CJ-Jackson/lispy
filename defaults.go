@@ -78,6 +78,7 @@ var DefaultMap = struct {
 		"param":      Param,
 		"pre":        Common,
 		"q":          CommonCite,
+		"raw":        Raw,
 		"rp":         Common,
 		"rt":         Common,
 		"ruby":       Common,
@@ -108,7 +109,6 @@ var DefaultMap = struct {
 		"var":        Common,
 		"video":      Video,
 		"wbr":        Wbr,
-		"raw":        Raw,
 	},
 	HandlerMap: LispyHandlerMap{},
 }
