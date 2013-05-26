@@ -324,13 +324,18 @@ func (li *Lispy) Render(str string) string {
 	li.linebreak = previous.linebreak
 
 	if li.first {
-		processedStr = strings.Replace(processedStr, "&#124;", "|", -1)
-		processedStr = strings.Replace(processedStr, "&#58;", ":", -1)
-		processedStr = strings.Replace(processedStr, "&#40;", "(", -1)
-		processedStr = strings.Replace(processedStr, "&#41;", ")", -1)
+		processedStr = unescape(processedStr)
 	}
 
 	return strings.TrimSpace(processedStr)
+}
+
+func unescape(str string) string {
+	str = strings.Replace(str, "&#124;", "|", -1)
+	str = strings.Replace(str, "&#58;", ":", -1)
+	str = strings.Replace(str, "&#40;", "(", -1)
+	str = strings.Replace(str, "&#41;", ")", -1)
+	return str
 }
 
 type opencloseInterface interface {
@@ -676,6 +681,11 @@ func (li *Lispy) EnableAutoLineBreak() {
 // Unescaped Content
 func (li *Lispy) RawContent() string {
 	return _html.UnescapeString(li.Content)
+}
+
+// Unescaped Content Extended, includes | : ( )
+func (li *Lispy) RawContentExt() string {
+	return unescape(li.RawContent())
 }
 
 func indexRune(str string, c rune) []int {
