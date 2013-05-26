@@ -16,11 +16,11 @@ import (
 
 var starterRegExp = regexp.MustCompile(`\(([\p{L}\p{N}-_]+?):`)
 
-var openerRegExp = regexp.MustCompile(`\(`)
-
-const closerConst = ")"
-
-var closerRegExp = regexp.MustCompile(`\)`)
+const (
+	closerConst = ")"
+	openRune    = rune('(')
+	closeRune   = rune(')')
+)
 
 type lispyMap map[string][]LispyHandler
 
@@ -194,6 +194,10 @@ type openclose struct {
 	pos    int
 }
 
+func (op openclose) Pos() int {
+	return op.pos
+}
+
 type openclosers []openclose
 
 func (op openclosers) Len() int {
@@ -260,8 +264,8 @@ func (li *Lispy) Render(str string) string {
 		content_pos := pos + lenght
 		li.Content = str[content_pos:]
 
-		openers_indexes := openerRegExp.FindAllStringIndex(li.Content, -1)
-		closers_indexes := closerRegExp.FindAllStringIndex(li.Content, -1)
+		openers_indexes := indexRune(li.Content, openRune)
+		closers_indexes := indexRune(li.Content, closeRune)
 
 		content_lenght := len(li.Content)
 		open := 1
@@ -269,11 +273,11 @@ func (li *Lispy) Render(str string) string {
 		openers := openclosers{}
 
 		for _, opener := range openers_indexes {
-			openers = append(openers, openclose{true, opener[0]})
+			openers = append(openers, openclose{true, opener})
 		}
 
 		for _, closer := range closers_indexes {
-			openers = append(openers, openclose{false, closer[0]})
+			openers = append(openers, openclose{false, closer})
 		}
 
 		sort.Sort(openers)
@@ -326,56 +330,74 @@ func (li *Lispy) Render(str string) string {
 	return strings.TrimSpace(processedStr)
 }
 
-var (
-	sepVerticalBarRegExp = regexp.MustCompile("\\|")
-	sepColonRegExp       = regexp.MustCompile(":")
-)
+type opencloseInterface interface {
+	Pos() int
+}
 
-func (li *Lispy) parseParamExt(acontent string, sep uint8) int {
-	var sep_indexes [][]int
+type opencloseSep int
 
-	if sep == '|' {
-		sep_indexes = sepVerticalBarRegExp.FindAllStringIndex(acontent, -1)
-	} else {
-		sep_indexes = sepColonRegExp.FindAllStringIndex(acontent, -1)
-	}
+func (op opencloseSep) Pos() int {
+	return int(op)
+}
 
-	openers_indexes := openerRegExp.FindAllStringIndex(acontent, -1)
-	closers_indexes := closerRegExp.FindAllStringIndex(acontent, -1)
+type openclosersI []opencloseInterface
 
-	openers := openclosers{}
+func (op openclosersI) Len() int {
+	return len(op)
+}
+
+func (op openclosersI) Less(i, j int) bool {
+	return op[i].Pos() < op[j].Pos()
+}
+
+func (op openclosersI) Swap(i, j int) {
+	op[i], op[j] = op[j], op[i]
+}
+
+func (li *Lispy) parseParamExt(acontent string, sep rune) int {
+	sep_indexes := indexRune(acontent, sep)
+
+	openers_indexes := indexRune(acontent, openRune)
+	closers_indexes := indexRune(acontent, closeRune)
+
+	openers := openclosersI{}
 	open := 0
 
 	for _, sep := range sep_indexes {
-		openers = append(openers, openclose{false, sep[0]})
+		openers = append(openers, opencloseSep(sep))
 	}
 
 	for _, opener := range openers_indexes {
-		openers = append(openers, openclose{true, opener[0]})
+		openers = append(openers, openclose{true, opener})
 	}
 
 	for _, closer := range closers_indexes {
-		openers = append(openers, openclose{false, closer[0]})
+		openers = append(openers, openclose{false, closer})
 	}
 
 	sort.Sort(openers)
 
 	pos := -1
 
+	kill := false
+
 	// Find seprater that outside of opener
 	for _, opener := range openers {
-		if acontent[opener.pos] == sep {
+		switch t := opener.(type) {
+		case opencloseSep:
 			if open <= 0 {
-				pos = opener.pos
-				break
+				pos = t.Pos()
+				kill = true
 			}
-			continue
+		case openclose:
+			if t.opener {
+				open++
+			} else {
+				open--
+			}
 		}
-
-		if opener.opener {
-			open++
-		} else {
-			open--
+		if kill {
+			break
 		}
 	}
 
@@ -651,4 +673,14 @@ func (li *Lispy) EnableAutoLineBreak() {
 // Unescaped Content
 func (li *Lispy) RawContent() string {
 	return _html.UnescapeString(li.Content)
+}
+
+func indexRune(str string, c rune) []int {
+	indexs := []int{}
+	for pos, cc := range str {
+		if cc == c {
+			indexs = append(indexs, pos)
+		}
+	}
+	return indexs
 }
