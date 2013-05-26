@@ -83,3 +83,7 @@ func ScriptFile(li *Lispy) string {
 func Escape(li *Lispy) string {
 	return li.Render(li.Content)
 }
+
+func Raw(li *Lispy) string {
+	return li.RawContent()
+}
