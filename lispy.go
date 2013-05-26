@@ -17,9 +17,8 @@ import (
 var starterRegExp = regexp.MustCompile(`\(([\p{L}\p{N}-_]+?):`)
 
 const (
-	closerConst = ")"
-	openRune    = rune('(')
-	closeRune   = rune(')')
+	openRune  = rune('(')
+	closeRune = rune(')')
 )
 
 type lispyMap map[string][]LispyHandler
@@ -310,8 +309,8 @@ func (li *Lispy) Render(str string) string {
 		li.Name = ""
 		li.Content = ""
 
-		if len(str) >= content_pos+content_lenght+len(closerConst) {
-			str = str[content_pos+content_lenght+len(closerConst):]
+		if len(str) >= content_pos+content_lenght+1 {
+			str = str[content_pos+content_lenght+1:]
 		} else {
 			str = str[content_pos+content_lenght:]
 		}
