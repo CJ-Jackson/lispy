@@ -242,6 +242,8 @@ func (li *Lispy) Render(str string) string {
 	if li.first {
 		str = strings.Replace(str, `\|`, "&#124;", -1)
 		str = strings.Replace(str, `\:`, "&#58;", -1)
+		str = strings.Replace(str, `\(`, "&#40;", -1)
+		str = strings.Replace(str, `\)`, "&#41;", -1)
 		li.first = false
 	}
 
@@ -324,6 +326,8 @@ func (li *Lispy) Render(str string) string {
 	if li.first {
 		processedStr = strings.Replace(processedStr, "&#124;", "|", -1)
 		processedStr = strings.Replace(processedStr, "&#58;", ":", -1)
+		processedStr = strings.Replace(processedStr, "&#40;", "(", -1)
+		processedStr = strings.Replace(processedStr, "&#41;", ")", -1)
 	}
 
 	return strings.TrimSpace(processedStr)

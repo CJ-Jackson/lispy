@@ -8,9 +8,9 @@ Simple, Elegant yet Extendible Syntax System.
 
 ### Escapers ###
 
-	\| and  \:
+	\| \: \( \)
 
-Note: Brackets '()' do not need escaping, just don't match the syntax!
+Note: Usually Brackets '()' do not need escaping, just don't match the syntax! If you planning on using emoticon always escape ;-\)
 
 ## Installation ##
 
@@ -51,7 +51,7 @@ Output:
 
 Documentation are avaliable at
 
-http://go.pkgdoc.org/github.com/CJ-Jackson/lispy
+http://gowalker.org/github.com/CJ-Jackson/lispy
 
 ## Note ##
 
