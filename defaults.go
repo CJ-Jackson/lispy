@@ -25,6 +25,7 @@ var DefaultMap = struct {
 		"blockquote": CommonCite,
 		"br":         Br,
 		"button":     Button,
+		"c":          HtmlAmp,
 		"canvas":     Canvas,
 		"caption":    Common,
 		"cite":       Common,
