@@ -107,18 +107,8 @@ func (li *Lispy) Copy() *Lispy {
 	li.RLock()
 	defer li.RUnlock()
 
-	allowedNames := append([]string{}, li.allowedNames...)
-
-	code := lispyMap{}
-
-	for key, function := range li.code {
-		code[key] = append(code[key], function...)
-	}
-
 	newli := &Lispy{}
 	*newli = *li
-	newli.code = code
-	newli.allowedNames = allowedNames
 	newli.RWMutex = sync.RWMutex{}
 	newli.param = map[string][]string{}
 
