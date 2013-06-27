@@ -5,7 +5,6 @@ import (
 	"bytes"
 	_html "html"
 	html "html/template"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -13,8 +12,6 @@ import (
 )
 
 // (name:value), (name:(name:value)), (name:content|key:value|key:value)
-
-var starterRegExp = regexp.MustCompile(`\(([\p{L}\p{N}-_]+?):`)
 
 const (
 	openRune  = rune('(')
@@ -239,35 +236,122 @@ func (li *Lispy) Render(str string) string {
 
 	processedStr := ""
 
+	indexer := func(c rune) []int {
+		indexs := []int{}
+		for pos, cc := range str {
+			if cc == c {
+				indexs = append(indexs, pos)
+			}
+		}
+		return indexs
+	}
+
+	indexerContent := func(c rune) []int {
+		indexs := []int{}
+		for pos, cc := range li.Content {
+			if cc == c {
+				indexs = append(indexs, pos)
+			}
+		}
+		return indexs
+	}
+
+	searchSyntax := func() *syntaxPos {
+		var indexes [2][]int
+		var ticks [2]bool
+		indexChan := make(chan int, 0)
+
+		go func() {
+			indexes[0] = indexer(openRune)
+			indexChan <- 1
+		}()
+
+		go func() {
+			indexes[1] = indexer(':')
+			indexChan <- 2
+		}()
+
+		for {
+			tick := <-indexChan
+			ticks[tick-1] = true
+			if ticks[0] && ticks[1] {
+				break
+			}
+		}
+
+		poss := stringPoss{}
+		for _, pos := range indexes[0] {
+			poss = append(poss, stringPos{'(', pos})
+		}
+
+		for _, pos := range indexes[1] {
+			poss = append(poss, stringPos{':', pos})
+		}
+		sort.Sort(poss)
+
+		for key, value := range poss {
+			if value.Char != ':' || key == 0 {
+				continue
+			}
+			if poss[key-1].Char != '(' {
+				continue
+			}
+			if strings.Contains(str[poss[key-1].Pos+1:value.Pos], " ") {
+				continue
+			}
+			return &syntaxPos{poss[key-1].Pos, value.Pos, str[poss[key-1].Pos+1 : value.Pos]}
+		}
+
+		return nil
+	}
+
 	for {
-		index := starterRegExp.FindStringIndex(str)
+		index := searchSyntax()
 		if index == nil {
 			processedStr += str
 			break
 		}
 
-		pos := index[0]
+		pos := index.Open
 
-		submatch := starterRegExp.FindStringSubmatch(str)
-		lenght := len(submatch[0])
-		li.Name = strings.ToLower(submatch[1])
+		lenght := index.Colon + 1
+		li.Name = index.Name
 
-		content_pos := pos + lenght
+		content_pos := lenght
 		li.Content = str[content_pos:]
 
-		openers_indexes := indexRune(li.Content, openRune)
-		closers_indexes := indexRune(li.Content, closeRune)
+		var indexes [2][]int
+		var ticks [2]bool
+		indexChan := make(chan int, 0)
+
+		go func() {
+			indexes[0] = indexerContent(openRune)
+			indexChan <- 1
+		}()
+
+		go func() {
+			indexes[1] = indexerContent(closeRune)
+			indexChan <- 2
+		}()
+
+		for {
+			tick := <-indexChan
+			ticks[tick-1] = true
+			if ticks[0] && ticks[1] {
+				break
+			}
+		}
 
 		content_lenght := len(li.Content)
 		open := 1
 
 		openers := openclosers{}
 
-		for _, opener := range openers_indexes {
+		for _, opener := range indexes[0] {
 			openers = append(openers, openclose{true, opener})
 		}
 
-		for _, closer := range closers_indexes {
+		for _, closer := range indexes[1] {
 			openers = append(openers, openclose{false, closer})
 		}
 
@@ -353,23 +437,55 @@ func (op openclosersI) Swap(i, j int) {
 }
 
 func (li *Lispy) parseParamExt(acontent string, sep rune) int {
-	sep_indexes := indexRune(acontent, sep)
+	indexer := func(c rune) []int {
+		indexs := []int{}
+		for pos, cc := range acontent {
+			if cc == c {
+				indexs = append(indexs, pos)
+			}
+		}
+		return indexs
+	}
 
-	openers_indexes := indexRune(acontent, openRune)
-	closers_indexes := indexRune(acontent, closeRune)
+	var indexes [3][]int
+	var ticks [3]bool
+	indexChan := make(chan int, 0)
+
+	go func() {
+		indexes[0] = indexer(sep)
+		indexChan <- 1
+	}()
+
+	go func() {
+		indexes[1] = indexer(openRune)
+		indexChan <- 2
+	}()
+
+	go func() {
+		indexes[2] = indexer(closeRune)
+		indexChan <- 3
+	}()
+
+	for {
+		tick := <-indexChan
+		ticks[tick-1] = true
+		if ticks[0] && ticks[1] && ticks[2] {
+			break
+		}
+	}
 
 	openers := openclosersI{}
 	open := 0
 
-	for _, sep := range sep_indexes {
+	for _, sep := range indexes[0] {
 		openers = append(openers, opencloseSep(sep))
 	}
 
-	for _, opener := range openers_indexes {
+	for _, opener := range indexes[1] {
 		openers = append(openers, openclose{true, opener})
 	}
 
-	for _, closer := range closers_indexes {
+	for _, closer := range indexes[2] {
 		openers = append(openers, openclose{false, closer})
 	}
 
@@ -678,12 +794,26 @@ func (li *Lispy) RawContentExt() string {
 	return unescape(li.RawContent())
 }
 
-func indexRune(str string, c rune) []int {
-	indexs := []int{}
-	for pos, cc := range str {
-		if cc == c {
-			indexs = append(indexs, pos)
-		}
-	}
-	return indexs
+type syntaxPos struct {
+	Open, Colon int
+	Name        string
+}
+
+type stringPos struct {
+	Char rune
+	Pos  int
+}
+
+type stringPoss []stringPos
+
+func (str stringPoss) Len() int {
+	return len(str)
+}
+
+func (str stringPoss) Less(i, j int) bool {
+	return str[i].Pos < str[j].Pos
+}
+
+func (str stringPoss) Swap(i, j int) {
+	str[i], str[j] = str[j], str[i]
 }
