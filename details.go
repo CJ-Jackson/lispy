@@ -1,6 +1,6 @@
 package lispy
 
 func Details(li *Lispy) string {
-	const htmlstr = `<details{{if existdel "open"}} open{{end}}>{{.Content|render}}</details>`
+	const htmlstr = `<details{{if .ExistDel "open"}} open{{end}}>{{.RenderedContent}}</details>`
 	return li.HtmlRender(htmlstr)
 }

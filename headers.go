@@ -5,6 +5,6 @@ import (
 )
 
 func Header(li *Lispy) string {
-	const htmlstr = `<%s{{range names}} {{.|attr}}="{{get .}}"{{end}}>{{.Content|render}}</%s>`
+	const htmlstr = `{{$li := .}}<%s{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</%s>`
 	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
 }

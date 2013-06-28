@@ -1,7 +1,7 @@
 package lispy
 
 func Form(li *Lispy) string {
-	const htmlstr = `<form{{if exist "action"}} action="{{getdel "action"}}"{{end}}{{if exist "method"}} method="{{getdel "method"}}"{{end}}{{if existdel "novalidate"}} novalidate{{end}}{{range names}} {{.}}="{{get .}}"{{end}} />`
+	const htmlstr = `{{$li := .}}<form{{if .Exist "action"}} action="{{.GetDel "action"|html}}"{{end}}{{if .Exist "method"}} method="{{.GetDel "method"|html}}"{{end}}{{if .ExistDel "novalidate"}} novalidate{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}} />`
 
 	if !li.Exist("action") {
 		li.Set("action", li.Content)
@@ -11,7 +11,7 @@ func Form(li *Lispy) string {
 }
 
 func Input(li *Lispy) string {
-	const htmlstr = `<input{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{if exist "value"}} value="{{getdel "value"}}"{{end}}{{if existdel "checked"}} checked{{end}}{{if existres "disabled"}} disabled{{end}}{{if existdel "autofocus"}} autofocus{{end}}{{if existdel "formnovalidate"}} formnovalidate{{end}}{{if existdel "multiple"}} multiple{{end}}{{if existdel "readonly"}} readonly{{end}}{{if existdel "required"}} required{{end}}{{range names}} {{.}}="{{get .}}"{{end}} />`
+	const htmlstr = `{{$li := .}}<input{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "value"}} value="{{.GetDel "value"|html}}"{{end}}{{if .ExistDel "checked"}} checked{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{if .ExistDel "formnovalidate"}} formnovalidate{{end}}{{if .ExistDel "multiple"}} multiple{{end}}{{if .ExistDel "readonly"}} readonly{{end}}{{if .ExistDel "required"}} required{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}} />`
 
 	if !li.Exist("name") {
 		li.Set("name", li.Content)
@@ -21,13 +21,13 @@ func Input(li *Lispy) string {
 }
 
 func Textarea(li *Lispy) string {
-	const htmlstr = `<textarea{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{if exist "value"}} value="{{getdel "value"}}"{{end}}{{if existres "disabled"}} disabled{{end}}{{if existdel "autofocus"}} autofocus{{end}}{{if existdel "readonly"}} readonly{{end}}{{if existdel "required"}} required{{end}}{{range names}} {{.}}="{{get .}}"{{end}}>{{.Content|parse}}</textarea>`
+	const htmlstr = `{{$li := .}}<textarea{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "value"}} value="{{.GetDel "value"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{if .ExistDel "readonly"}} readonly{{end}}{{if .ExistDel "required"}} required{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</textarea>`
 
 	return li.HtmlRender(htmlstr)
 }
 
 func Select(li *Lispy) string {
-	const htmlstr = `<select{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{if existres "disabled"}} disabled{{end}}{{if existdel "autofocus"}} autofocus{{end}}{{if existdel "multiple"}} multiple{{end}}{{range names}} {{.}}="{{get .}}"{{end}}>{{.Content|parse}}</select>`
+	const htmlstr = `{{$li := .}}<select{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{if .ExistDel "multiple"}} multiple{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</select>`
 
 	if !li.Exist("name") {
 		li.Set("name", li.Content)
@@ -37,13 +37,13 @@ func Select(li *Lispy) string {
 }
 
 func Option(li *Lispy) string {
-	const htmlstr = `<option{{if exist "value"}} value="{{getdel "value"}}"{{end}}{{if existres "disabled"}} disabled{{end}}{{if existdel "selected"}} selected{{end}}{{range names}} {{.}}="{{get .}}"{{end}}>{{.Content|parse}}</option>`
+	const htmlstr = `{{$li := .}}<option{{if .Exist "value"}} value="{{.GetDel "value"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "selected"}} selected{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</option>`
 
 	return li.HtmlRender(htmlstr)
 }
 
 func Output(li *Lispy) string {
-	const htmlstr = `<output{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{if exist "for"}} for="{{getdel "for"}}"{{end}}{{range names}} {{.}}="{{get .}}"{{end}}></output>`
+	const htmlstr = `{{$li := .}}<output{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "for"}} for="{{.GetDel "for"|html}}"{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}></output>`
 
 	if !li.Exist("name") {
 		li.Set("name", li.Content)
@@ -53,17 +53,17 @@ func Output(li *Lispy) string {
 }
 
 func Label(li *Lispy) string {
-	const htmlstr = `<label{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{if exist "for"}} for="{{getdel "for"}}"{{end}}{{range names}} {{.}}="{{get .}}"{{end}}>{{.Content|parse}}</label>`
+	const htmlstr = `{{$li := .}}<label{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "for"}} for="{{.GetDel "for"|html}}"{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</label>`
 	return li.HtmlRender(htmlstr)
 }
 
 func FieldSet(li *Lispy) string {
-	const htmlstr = `<fieldset{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{if existres "disabled"}} disabled{{end}}{{range names}} {{.}}="{{get .}}"{{end}}>{{.Content|parse}}</fieldset>`
+	const htmlstr = `{{$li := .}}<fieldset{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</fieldset>`
 	return li.HtmlRender(htmlstr)
 }
 
 func Keygen(li *Lispy) string {
-	const htmlstr = `<keygen{{if exist "name"}} name="{{getdel "name"}}"{{end}}{{if exist "keytype"}} keytype="{{getdel "keytype"}}"{{end}}{{if existres "disabled"}} disabled{{end}}{{if existres "challenge"}} challenge{{end}}{{if existdel "autofocus"}} autofocus{{end}}{{range names}} {{.}}="{{get .}}"{{end}} />`
+	const htmlstr = `{{$li := .}}<keygen{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "keytype"}} keytype="{{.GetDel "keytype"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistRes "challenge"}} challenge{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}} />`
 
 	if !li.Exist("name") {
 		li.Set("name", li.Content)

@@ -1,7 +1,7 @@
 package lispy
 
 func Area(li *Lispy) string {
-	const htmlstr = `<area{{if exist "shape"}} shape="{{getdel "shape"}}"{{end}}{{if exist "coords"}} coords="{{getdel "coords"}}"{{end}}{{if exist "href"}} href="{{getdel "href"}}"{{end}}{{if exist "alt"}} alt="{{getdel "alt"}}"{{end}}{{range names}} {{.|attr}}="{{get .}}"{{end}} />`
+	const htmlstr = `{{$li := .}}<area{{if .Exist "shape"}} shape="{{.GetDel "shape"|html}}"{{end}}{{if .Exist "coords"}} coords="{{.GetDel "coords"|html}}"{{end}}{{if .Exist "href"}} href="{{.GetDel "href"|html}}"{{end}}{{if .Exist "alt"}} alt="{{.GetDel "alt"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}} />`
 
 	if !li.Exist("shape") {
 		li.Set("shape", li.Content)
@@ -11,7 +11,7 @@ func Area(li *Lispy) string {
 }
 
 func AreaNoFollow(li *Lispy) string {
-	const htmlstr = `<area{{if exist "shape"}} shape="{{getdel "shape"}}"{{end}}{{if exist "coords"}} coords="{{getdel "coords"}}"{{end}}{{if exist "href"}} href="{{getdel "href"}}"{{end}}{{if exist "alt"}} alt="{{getdel "alt"}}"{{end}} rel="nofollow"{{range names}} {{.|attr}}="{{get .}}"{{end}} />`
+	const htmlstr = `{{$li := .}}<area{{if .Exist "shape"}} shape="{{.GetDel "shape"|html}}"{{end}}{{if .Exist "coords"}} coords="{{.GetDel "coords"|html}}"{{end}}{{if .Exist "href"}} href="{{.GetDel "href"|html}}"{{end}}{{if .Exist "alt"}} alt="{{.GetDel "alt"|html}}"{{end}} rel="nofollow"{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}} />`
 
 	if !li.Exist("shape") {
 		li.Set("shape", li.Content)

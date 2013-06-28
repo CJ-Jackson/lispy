@@ -65,6 +65,7 @@ type Lispy struct {
 	sync.RWMutex
 	Name          string
 	Content       string
+	CacheName     string
 	htmlEscape    bool
 	restrictParam bool
 	allowedNames  []string
@@ -80,6 +81,7 @@ func New() *Lispy {
 	li := &Lispy{
 		Name:          "",
 		Content:       "",
+		CacheName:     "",
 		htmlEscape:    true,
 		restrictParam: false,
 		allowedNames:  []string{},
@@ -108,6 +110,7 @@ func (li *Lispy) Copy() *Lispy {
 	*newli = *li
 	newli.RWMutex = sync.RWMutex{}
 	newli.param = map[string][]string{}
+	newli.CacheName = ""
 
 	return newli
 }
@@ -236,70 +239,23 @@ func (li *Lispy) Render(str string) string {
 
 	processedStr := ""
 
-	indexer := func(c rune) []int {
-		indexs := []int{}
-		for pos, cc := range str {
-			if cc == c {
-				indexs = append(indexs, pos)
-			}
-		}
-		return indexs
-	}
-
-	indexerContent := func(c rune) []int {
-		indexs := []int{}
-		for pos, cc := range li.Content {
-			if cc == c {
-				indexs = append(indexs, pos)
-			}
-		}
-		return indexs
-	}
-
 	searchSyntax := func() *syntaxPos {
-		var indexes [2][]int
-		var ticks [2]bool
-		indexChan := make(chan int, 0)
-
-		go func() {
-			indexes[0] = indexer(openRune)
-			indexChan <- 1
-		}()
-
-		go func() {
-			indexes[1] = indexer(':')
-			indexChan <- 2
-		}()
-
-		for {
-			tick := <-indexChan
-			ticks[tick-1] = true
-			if ticks[0] && ticks[1] {
-				break
-			}
-		}
-
-		poss := stringPoss{}
-		for _, pos := range indexes[0] {
-			poss = append(poss, stringPos{'(', pos})
-		}
-
-		for _, pos := range indexes[1] {
-			poss = append(poss, stringPos{':', pos})
-		}
-		sort.Sort(poss)
-
-		for key, value := range poss {
-			if value.Char != ':' || key == 0 {
+		for key, value := range str {
+			if value != ':' || key == 0 {
 				continue
 			}
-			if poss[key-1].Char != '(' {
+			openPos := strings.LastIndex(str[:key], "(")
+			if openPos == -1 {
 				continue
 			}
-			if strings.Contains(str[poss[key-1].Pos+1:value.Pos], " ") {
+			if strings.ContainsRune(str[openPos+1:key], ' ') {
 				continue
 			}
-			return &syntaxPos{poss[key-1].Pos, value.Pos, str[poss[key-1].Pos+1 : value.Pos]}
+			value := strings.ToLower(str[openPos+1 : key])
+			if len(value) <= 0 {
+				continue
+			}
+			return &syntaxPos{openPos, key, value}
 		}
 
 		return nil
@@ -320,52 +276,18 @@ func (li *Lispy) Render(str string) string {
 		content_pos := lenght
 		li.Content = str[content_pos:]
 
-		var indexes [2][]int
-		var ticks [2]bool
-		indexChan := make(chan int, 0)
-
-		go func() {
-			indexes[0] = indexerContent(openRune)
-			indexChan <- 1
-		}()
-
-		go func() {
-			indexes[1] = indexerContent(closeRune)
-			indexChan <- 2
-		}()
-
-		for {
-			tick := <-indexChan
-			ticks[tick-1] = true
-			if ticks[0] && ticks[1] {
-				break
-			}
-		}
-
 		content_lenght := len(li.Content)
 		open := 1
 
-		openers := openclosers{}
-
-		for _, opener := range indexes[0] {
-			openers = append(openers, openclose{true, opener})
-		}
-
-		for _, closer := range indexes[1] {
-			openers = append(openers, openclose{false, closer})
-		}
-
-		sort.Sort(openers)
-
 		// Find closer for current opener!
-		for _, opener := range openers {
-			if opener.opener {
+		for key, value := range li.Content {
+			if value == openRune {
 				open++
-			} else {
+			} else if value == closeRune {
 				open--
 			}
 			if open <= 0 {
-				content_lenght = opener.pos
+				content_lenght = key
 				break
 			}
 		}
@@ -384,6 +306,7 @@ func (li *Lispy) Render(str string) string {
 		// Reset state
 		li.Name = ""
 		li.Content = ""
+		li.CacheName = ""
 
 		if len(str) >= content_pos+content_lenght+1 {
 			str = str[content_pos+content_lenght+1:]
@@ -404,118 +327,16 @@ func (li *Lispy) Render(str string) string {
 	return strings.TrimSpace(processedStr)
 }
 
+func (li *Lispy) RenderedContent() html.HTML {
+	return html.HTML(li.Render(li.Content))
+}
+
 func unescape(str string) string {
 	str = strings.Replace(str, "&#124;", "|", -1)
 	str = strings.Replace(str, "&#58;", ":", -1)
 	str = strings.Replace(str, "&#40;", "(", -1)
 	str = strings.Replace(str, "&#41;", ")", -1)
 	return str
-}
-
-type opencloseInterface interface {
-	Pos() int
-}
-
-type opencloseSep int
-
-func (op opencloseSep) Pos() int {
-	return int(op)
-}
-
-type openclosersI []opencloseInterface
-
-func (op openclosersI) Len() int {
-	return len(op)
-}
-
-func (op openclosersI) Less(i, j int) bool {
-	return op[i].Pos() < op[j].Pos()
-}
-
-func (op openclosersI) Swap(i, j int) {
-	op[i], op[j] = op[j], op[i]
-}
-
-func (li *Lispy) parseParamExt(acontent string, sep rune) int {
-	indexer := func(c rune) []int {
-		indexs := []int{}
-		for pos, cc := range acontent {
-			if cc == c {
-				indexs = append(indexs, pos)
-			}
-		}
-		return indexs
-	}
-
-	var indexes [3][]int
-	var ticks [3]bool
-	indexChan := make(chan int, 0)
-
-	go func() {
-		indexes[0] = indexer(sep)
-		indexChan <- 1
-	}()
-
-	go func() {
-		indexes[1] = indexer(openRune)
-		indexChan <- 2
-	}()
-
-	go func() {
-		indexes[2] = indexer(closeRune)
-		indexChan <- 3
-	}()
-
-	for {
-		tick := <-indexChan
-		ticks[tick-1] = true
-		if ticks[0] && ticks[1] && ticks[2] {
-			break
-		}
-	}
-
-	openers := openclosersI{}
-	open := 0
-
-	for _, sep := range indexes[0] {
-		openers = append(openers, opencloseSep(sep))
-	}
-
-	for _, opener := range indexes[1] {
-		openers = append(openers, openclose{true, opener})
-	}
-
-	for _, closer := range indexes[2] {
-		openers = append(openers, openclose{false, closer})
-	}
-
-	sort.Sort(openers)
-
-	pos := -1
-
-	kill := false
-
-	// Find seprater that outside of opener
-	for _, opener := range openers {
-		switch t := opener.(type) {
-		case opencloseSep:
-			if open <= 0 {
-				pos = t.Pos()
-				kill = true
-			}
-		case openclose:
-			if t.opener {
-				open++
-			} else {
-				open--
-			}
-		}
-		if kill {
-			break
-		}
-	}
-
-	return pos
 }
 
 func (li *Lispy) ParseParam() {
@@ -529,40 +350,66 @@ func (li *Lispy) parseParam() {
 	li.paramParsed = true
 	li.Content = strings.TrimSpace(li.Content)
 
-	pos := li.parseParamExt(li.Content, '|')
+	poss := stringPoss{}
 
-	if pos == -1 {
+	open := 0
+
+	barFound := false
+
+	for key, value := range li.Content {
+		switch value {
+		case '|':
+			if open <= 0 {
+				poss = append(poss, stringPos{'|', key})
+				barFound = true
+			}
+		case ':':
+			if open <= 0 && barFound {
+				poss = append(poss, stringPos{':', key})
+			}
+		case openRune:
+			open++
+		case closeRune:
+			open--
+		}
+	}
+
+	if len(poss) == 0 {
 		return
 	}
 
-	params := li.Content[pos+1:]
-
-	li.Content = strings.TrimSpace(li.Content[:pos])
-
-	for {
-		namepos := li.parseParamExt(params, ':')
-		name := ""
-		if namepos == -1 {
-			name = params
-		} else {
-			name = params[:namepos]
+	for key, sep := range poss {
+		if sep.Char != '|' {
+			continue
 		}
-		params = params[namepos+1:]
-		valuepos := li.parseParamExt(params, '|')
-		value := ""
-		if valuepos == -1 {
-			if namepos == -1 {
+		colonPos := -1
+		barPos := -1
+		for _, _sep := range poss[key+1:] {
+			if _sep.Char == ':' && colonPos == -1 {
+				colonPos = _sep.Pos
+			} else if _sep.Char == '|' && colonPos != -1 {
+				barPos = _sep.Pos
+			}
+
+			if colonPos != -1 && barPos != -1 {
 				break
 			}
-			value = params
-			li.Set(name, value)
-			break
-		} else {
-			value = params[:valuepos]
 		}
-		params = params[valuepos+1:]
-		li.Set(name, value)
+		var value string
+		if barPos != -1 {
+			value = li.Content[colonPos+1 : barPos]
+		} else {
+			value = li.Content[colonPos+1:]
+		}
+		if colonPos == -1 {
+			li.Set(li.Content[sep.Pos+1:], "")
+		} else {
+			li.Set(li.Content[sep.Pos+1:colonPos], value)
+		}
+
 	}
+
+	li.Content = li.Content[:poss[0].Pos]
 
 	li.filters()
 }
@@ -608,6 +455,7 @@ func (li *Lispy) Set(name, value string) {
 
 // Get Parameter/Attribute
 func (li *Lispy) Get(name string) string {
+	li.parseParam()
 	if !li.Exist(name) {
 		return ""
 	}
@@ -615,9 +463,19 @@ func (li *Lispy) Get(name string) string {
 	return li.param[name][0]
 }
 
+func (li *Lispy) GetDel(name string) string {
+	defer li.Delete(name)
+	return li.Get(name)
+}
+
 // Get Raw Parameter/Attribute (Unescaped)
 func (li *Lispy) GetRaw(name string) string {
 	return _html.UnescapeString(li.Get(name))
+}
+
+func (li *Lispy) GetRawDel(name string) string {
+	defer li.Delete(name)
+	return li.GetRaw(name)
 }
 
 // Get Parameter/Attribute as Int64, return 0 on fail!
@@ -629,9 +487,19 @@ func (li *Lispy) GetInt64(name string) int64 {
 	return num
 }
 
+func (li *Lispy) GetInt64Del(name string) int64 {
+	defer li.Delete(name)
+	return li.GetInt64(name)
+}
+
 // Get Parameter/Attribute as Int, return 0 on fail!
 func (li *Lispy) GetInt(name string) int {
 	return int(li.GetInt64(name))
+}
+
+func (li *Lispy) GetIntDel(name string) int {
+	defer li.Delete(name)
+	return li.GetInt(name)
 }
 
 // Check for existant of Parameter/Attribute
@@ -642,6 +510,19 @@ func (li *Lispy) Exist(name string) bool {
 	}
 
 	return true
+}
+
+func (li *Lispy) ExistDel(name string) bool {
+	defer li.Delete(name)
+	return li.Exist(name)
+}
+
+func (li *Lispy) ExistRes(name string) bool {
+	defer li.Delete(name)
+	if li.restrictParam {
+		return false
+	}
+	return li.Exist(name)
 }
 
 // Delete Parameter/Attribute
@@ -670,73 +551,51 @@ func (li *Lispy) GetNames() []string {
 	return str
 }
 
+var _templateCache = struct {
+	sync.RWMutex
+	c map[string]*html.Template
+}{
+	c: map[string]*html.Template{},
+}
+
 // HTML Render
 func (li *Lispy) HtmlRender(htmlstr string) string {
-	htmlfunc := html.FuncMap{
-		"names": func() []string {
-			return li.GetNames()
-		},
-		"get": func(name string) html.HTML {
-			return li.Safe(li.Get(name))
-		},
-		"getint64": func(name string) int64 {
-			return li.GetInt64(name)
-		},
-		"getint": func(name string) int {
-			return li.GetInt(name)
-		},
-		"getdel": func(name string) html.HTML {
-			defer li.Delete(name)
-			return li.Safe(li.Get(name))
-		},
-		"getint64del": func(name string) int64 {
-			defer li.Delete(name)
-			return li.GetInt64(name)
-		},
-		"getintdel": func(name string) int {
-			defer li.Delete(name)
-			return li.GetInt(name)
-		},
-		"exist": func(name string) bool {
-			return li.Exist(name)
-		},
-		"existdel": func(name string) bool {
-			defer li.Delete(name)
-			return li.Exist(name)
-		},
-		"existres": func(name string) bool {
-			defer li.Delete(name)
-			if li.restrictParam {
-				return false
-			}
-			return li.Exist(name)
-		},
-		"render": func(str string) html.HTML {
-			return li.RenderSafe(str)
-		},
-		"renderunsafe": func(str string) string {
-			return li.Render(str)
-		},
-		"safe": func(str string) html.HTML {
-			return li.Safe(str)
-		},
-		"css_safe": func(str string) html.CSS {
-			return html.CSS(str)
-		},
-		"js_safe": func(str string) html.JS {
-			return html.JS(str)
-		},
-		"attr": func(str string) html.HTMLAttr {
-			return html.HTMLAttr(str)
-		},
+	if li.CacheName == "" {
+		li.CacheName = li.Name
 	}
 
 	buf := &bytes.Buffer{}
 	defer buf.Reset()
-	t, err := html.New("html").Funcs(htmlfunc).Parse(htmlstr)
-	if err != nil {
-		buf.WriteString(err.Error())
+
+	var err error
+
+	_templateCache.RLock()
+	t := _templateCache.c[li.CacheName]
+	_templateCache.RUnlock()
+	if t == nil {
+		t, err = html.New("html").Funcs(html.FuncMap{
+			"html": func(str string) html.HTML {
+				return html.HTML(str)
+			},
+			"css": func(str string) html.CSS {
+				return html.CSS(str)
+			},
+			"js": func(str string) html.JS {
+				return html.JS(str)
+			},
+			"attr": func(str string) html.HTMLAttr {
+				return html.HTMLAttr(str)
+			},
+		}).Parse(htmlstr)
+		if err != nil {
+			buf.WriteString(err.Error())
+			return buf.String()
+		}
+		_templateCache.Lock()
+		_templateCache.c[li.CacheName] = t
+		_templateCache.Unlock()
 	}
+
 	err = t.Execute(buf, li)
 	if err != nil {
 		buf.WriteString(err.Error())
