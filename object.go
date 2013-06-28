@@ -1,26 +1,71 @@
 package lispy
 
 func Object(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<object{{if .Exist "width"}} width="{{.GetDel "width"}}"{{end}}{{if .Exist "height"}} height="{{.GetDel "height"}}"{{end}}{{if .Exist "data"}} data="{{.GetDel "data"}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</object>`
-	return li.HtmlRender(htmlstr)
+	str := `<object `
+
+	if li.Exist("width") {
+		str += `width="` + li.GetDel("width") + `" `
+	}
+
+	if li.Exist("height") {
+		str += `height="` + li.GetDel("height") + `" `
+	}
+
+	if li.Exist("data") {
+		str += `data="` + li.GetDel("data") + `" `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</object>`
+
+	return str
 }
 
 func Param(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<param{{if .Exist "name"}} name="{{.GetDel "name"}}"{{end}}{{if .Exist "value"}} value="{{.GetDel "value"}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}} />`
+	str := `<param `
 
-	if !li.Exist("value") {
-		li.Set("value", li.Content)
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
 	}
 
-	return li.HtmlRender(htmlstr)
+	if li.Exist("value") {
+		str += `value="` + li.GetDel("value") + `" `
+	}
+
+	str += li.GetParam()
+
+	str += `/>`
+
+	return str
 }
 
 func Embed(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<embed{{if .Exist "src"}} src="{{.GetDel "src"}}"{{end}}{{if .Exist "type"}} type="{{.GetDel "type"}}"{{end}}{{if .Exist "width"}} width="{{.GetDel "width"}}"{{end}}{{if .Exist "height"}} height="{{.GetDel "height"}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}} />`
+	str := `<embed `
 
-	if !li.Exist("src") {
-		li.Set("src", li.Content)
+	if li.Exist("src") {
+		str += `src="` + li.GetDel("src") + `" `
 	}
 
-	return li.HtmlRender(htmlstr)
+	if li.Exist("type") {
+		str += `type="` + li.GetDel("type") + `" `
+	}
+
+	if li.Exist("width") {
+		str += `width="` + li.GetDel("width") + `" `
+	}
+
+	if li.Exist("height") {
+		str += `height="` + li.GetDel("height") + `" `
+	}
+
+	str += li.GetParam()
+
+	str += `/>`
+
+	return str
 }

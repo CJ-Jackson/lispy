@@ -1,52 +1,57 @@
 package lispy
 
-import (
-	"fmt"
-)
+func commonCodeReuse(li *Lispy, names ...string) string {
+	str := `<` + li.Name + ` `
+
+	for _, name := range names {
+		if li.Exist(name) {
+			str += name + `="` + li.GetDel(name) + `" `
+		}
+	}
+
+	str += li.GetParam() + ` >`
+
+	str += li.Render(li.Content)
+
+	str += `</` + li.Name + `>`
+
+	return str
+}
 
 func Common(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li)
 }
 
 func CommonValue(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "value"}} value="{{.GetDel "value"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "value")
 }
 
 func CommonName(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "name")
 }
 
 func CommonCite(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "cite"}} cite="{{.GetDel "cite"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "cite")
 }
 
 func CommonTitle(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "title"}} title="{{.GetDel "title"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "title")
 }
 
 func CommonSpan(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "span"}} span="{{.GetDel "span"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "span")
 }
 
 func CommonDir(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "dir"}} dir="{{.GetDel "dir"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "dir")
 }
 
 func CommonCiteDateTime(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "cite"}} cite="{{.GetDel "cite"|html}}"{{end}}{{if .Exist "datetime"}} datetime="{{.GetDel "datetime"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "cite", "datetime")
 }
 
 func CommonSrc(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<%s{{if .Exist "src"}} src="{{.GetDel "src"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</%s>`
-	return li.HtmlRender(fmt.Sprintf(htmlstr, li.Name, li.Name))
+	return commonCodeReuse(li, "src")
 }
 
 func Blanks(li *Lispy) string {
@@ -54,30 +59,47 @@ func Blanks(li *Lispy) string {
 }
 
 func JavaScript(li *Lispy) string {
-	const htmlstr = `<script type="text/javascript">{{.Content|js}}</script>`
-	li.Content = li.RawContent()
-	return li.HtmlRender(htmlstr)
+	str := `<script type="text/javascript">`
+
+	str += li.RawContent()
+
+	str += `</script>`
+
+	return str
 }
 
 func CSS(li *Lispy) string {
-	const htmlstr = `<style type="text/css" scoped>{{.Content|css}}</style>`
-	li.Content = li.RawContent()
-	return li.HtmlRender(htmlstr)
+	str := `<style type="text/css" scoped>`
+
+	str += li.RawContent()
+
+	str += `</style>`
+
+	return str
 }
 
 func Canvas(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<canvas{{if .Exist "id"}} id="{{.GetDel "id"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}></canvas>`
+	str := `<canvas `
 
-	if !li.Exist("id") {
-		li.Set("id", li.Content)
+	if li.Exist("id") {
+		str += `id="` + li.GetDel("id") + `" `
 	}
 
-	return li.HtmlRender(htmlstr)
+	str += li.GetParam() + ` >`
+
+	str += `</canvas>`
+
+	return str
 }
 
 func ScriptFile(li *Lispy) string {
-	const htmlstr = `<script src="{{.Content}}"></script>`
-	return li.HtmlRender(htmlstr)
+	str := `<script src="`
+
+	str += li.Content
+
+	str += `"></script>`
+
+	return str
 }
 
 func Escape(li *Lispy) string {

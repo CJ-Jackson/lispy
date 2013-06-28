@@ -1,6 +1,31 @@
 package lispy
 
+import (
+	"fmt"
+)
+
 func Ol(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<ol{{if .Exist "start"}} start="{{.GetInt64Del "start"|html}}"{{end}}{{if .Exist "type"}} type="{{.GetDel "type"|html}}"{{end}}{{if .ExistDel "reversed"}} reversed{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</ol>`
-	return li.HtmlRender(htmlstr)
+	str := `<ol `
+
+	if li.Exist("start") {
+		str += `start="` + fmt.Sprint(li.GetInt64Del("start")) + `" `
+	}
+
+	if li.Exist("type") {
+		str += `type="` + li.GetDel("type") + `" `
+	}
+
+	if li.ExistDel("reverse") {
+		str += `reverse `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</ol>`
+
+	return str
 }

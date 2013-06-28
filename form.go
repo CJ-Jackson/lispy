@@ -1,73 +1,281 @@
 package lispy
 
 func Form(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<form{{if .Exist "action"}} action="{{.GetDel "action"|html}}"{{end}}{{if .Exist "method"}} method="{{.GetDel "method"|html}}"{{end}}{{if .ExistDel "novalidate"}} novalidate{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}} />`
-
 	if !li.Exist("action") {
 		li.Set("action", li.Content)
 	}
 
-	return li.HtmlRender(htmlstr)
+	str := `<form `
+
+	if li.Exist("action") {
+		str += `action="` + li.GetDel("action") + `" `
+	}
+
+	if li.Exist("method") {
+		str += `method="` + li.GetDel("method") + `" `
+	}
+
+	if li.ExistDel("novalidate") {
+		str += `novalidate `
+	}
+
+	str += li.GetParam()
+
+	str += `/>`
+
+	return str
 }
 
 func Input(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<input{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "value"}} value="{{.GetDel "value"|html}}"{{end}}{{if .ExistDel "checked"}} checked{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{if .ExistDel "formnovalidate"}} formnovalidate{{end}}{{if .ExistDel "multiple"}} multiple{{end}}{{if .ExistDel "readonly"}} readonly{{end}}{{if .ExistDel "required"}} required{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}} />`
-
 	if !li.Exist("name") {
 		li.Set("name", li.Content)
 	}
 
-	return li.HtmlRender(htmlstr)
+	str := `<input `
+
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
+	}
+
+	if li.Exist("value") {
+		str += `value="` + li.GetDel("value") + `" `
+	}
+
+	if li.ExistDel("checked") {
+		str += `checked `
+	}
+
+	if li.ExistRes("disabled") {
+		str += `disabled `
+	}
+
+	if li.ExistDel("autofocus") {
+		str += `autofocus `
+	}
+
+	if li.ExistDel("formnovalidate") {
+		str += `formnovalidate `
+	}
+
+	if li.ExistDel("multiple") {
+		str += `multiple `
+	}
+
+	if li.ExistDel("readonly") {
+		str += `readonly `
+	}
+
+	if li.ExistDel("required") {
+		str += `required `
+	}
+
+	str += li.GetParam()
+
+	str += `/>`
+
+	return str
 }
 
 func Textarea(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<textarea{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "value"}} value="{{.GetDel "value"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{if .ExistDel "readonly"}} readonly{{end}}{{if .ExistDel "required"}} required{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</textarea>`
+	str := `<input `
 
-	return li.HtmlRender(htmlstr)
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
+	}
+
+	if li.Exist("value") {
+		str += `value="` + li.GetDel("value") + `" `
+	}
+
+	if li.ExistRes("disabled") {
+		str += `disabled `
+	}
+
+	if li.ExistDel("autofocus") {
+		str += `autofocus `
+	}
+
+	if li.ExistDel("multiple") {
+		str += `multiple `
+	}
+
+	if li.ExistDel("readonly") {
+		str += `readonly `
+	}
+
+	if li.ExistDel("required") {
+		str += `required `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.RawContentExt()
+
+	str += `</textarea>`
+
+	return str
 }
 
 func Select(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<select{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{if .ExistDel "multiple"}} multiple{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</select>`
-
 	if !li.Exist("name") {
 		li.Set("name", li.Content)
 	}
 
-	return li.HtmlRender(htmlstr)
+	str := `<select `
+
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
+	}
+
+	if li.ExistRes("disabled") {
+		str += `disabled `
+	}
+
+	if li.ExistDel("autofocus") {
+		str += `autofocus `
+	}
+
+	if li.ExistDel("multiple") {
+		str += `multiple `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</select>`
+
+	return str
 }
 
 func Option(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<option{{if .Exist "value"}} value="{{.GetDel "value"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistDel "selected"}} selected{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</option>`
+	str := `<option `
 
-	return li.HtmlRender(htmlstr)
+	if li.Exist("value") {
+		str += `value="` + li.GetDel("value") + `" `
+	}
+
+	if li.ExistRes("disabled") {
+		str += `disabled `
+	}
+
+	if li.ExistDel("selected") {
+		str += `selected `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</option>`
+
+	return str
 }
 
 func Output(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<output{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "for"}} for="{{.GetDel "for"|html}}"{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}></output>`
-
 	if !li.Exist("name") {
 		li.Set("name", li.Content)
 	}
 
-	return li.HtmlRender(htmlstr)
+	str := `<output `
+
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
+	}
+
+	if li.Exist("for") {
+		str += `for="` + li.GetDel("for") + `" `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += `</output>`
+
+	return str
 }
 
 func Label(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<label{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "for"}} for="{{.GetDel "for"|html}}"{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</label>`
-	return li.HtmlRender(htmlstr)
+	str := `<label `
+
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
+	}
+
+	if li.Exist("for") {
+		str += `for="` + li.GetDel("for") + `" `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</label>`
+
+	return str
 }
 
 func FieldSet(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<fieldset{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}}>{{.RenderedContent}}</fieldset>`
-	return li.HtmlRender(htmlstr)
+	str := `<fieldset `
+
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
+	}
+
+	if li.ExistRes("disabled") {
+		str += `disabled `
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</fieldset>`
+
+	return str
 }
 
 func Keygen(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<keygen{{if .Exist "name"}} name="{{.GetDel "name"|html}}"{{end}}{{if .Exist "keytype"}} keytype="{{.GetDel "keytype"|html}}"{{end}}{{if .ExistRes "disabled"}} disabled{{end}}{{if .ExistRes "challenge"}} challenge{{end}}{{if .ExistDel "autofocus"}} autofocus{{end}}{{range .GetNames}} {{.}}="{{$li.Get .|html}}"{{end}} />`
-
 	if !li.Exist("name") {
 		li.Set("name", li.Content)
 	}
 
-	return li.HtmlRender(htmlstr)
+	str := `<fieldset `
+
+	if li.Exist("name") {
+		str += `name="` + li.GetDel("name") + `" `
+	}
+
+	if li.Exist("keytype") {
+		str += `keytype="` + li.GetDel("keytype") + `" `
+	}
+
+	if li.ExistRes("disabled") {
+		str += `disabled `
+	}
+
+	if li.ExistRes("challenge") {
+		str += `challenge `
+	}
+
+	if li.ExistDel("autofocus") {
+		str += `autofocus `
+	}
+
+	str += li.GetParam()
+
+	str += `/>`
+
+	return str
 }

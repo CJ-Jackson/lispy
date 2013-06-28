@@ -1,11 +1,37 @@
 package lispy
 
 func Table(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<table{{if .ExistDel "border"}} border="1"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</table>`
-	return li.HtmlRender(htmlstr)
+	str := `<table `
+
+	if li.ExistDel("border") {
+		str += `border="1"`
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</table>`
+
+	return str
 }
 
 func TableTd(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<td{{if .Exist "colspan"}} colspan="{{.GetDel "colspan"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .}}"{{end}}>{{.RenderedContent}}</td>`
-	return li.HtmlRender(htmlstr)
+	str := `<td `
+
+	if li.Exist("colspan") {
+		str += `colspan="` + li.GetDel("colspan") + `"`
+	}
+
+	str += li.GetParam()
+
+	str += `>`
+
+	str += li.Render(li.Content)
+
+	str += `</td>`
+
+	return str
 }
