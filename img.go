@@ -18,7 +18,7 @@ func Img(li *Lispy) string {
 
 	str += li.GetParam()
 
-	str += ` />`
+	str += `/>`
 
 	return str
 }

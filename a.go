@@ -23,6 +23,8 @@ func A(li *Lispy) string {
 }
 
 func ANoFollow(li *Lispy) string {
+	li.Delete("rel")
+
 	str := `<a href="`
 
 	if !li.Exist("href") {

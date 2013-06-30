@@ -1,38 +1,37 @@
 package lispy
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestA(t *testing.T) {
-	fmt.Println("A Test:\r\n")
-	fmt.Println()
-
 	lisp := New()
+
 	code := "(a:http://example.com)"
-	fmt.Println("Input:")
-	fmt.Println(code)
 	str := lisp.Render(code)
-	fmt.Println("Output:")
-	fmt.Println(str)
-	fmt.Println()
+	if str != `<a href="http://example.com">http://example.com</a>` {
+		t.Fail()
+	}
 
-	lisp = New()
 	code = "(a:Hello World!|href:http://example.com)"
-	fmt.Println("Input:")
-	fmt.Println(code)
 	str = lisp.Render(code)
-	fmt.Println("Output:")
-	fmt.Println(str)
-	fmt.Println()
+	if str != `<a href="http://example.com">Hello World!</a>` {
+		t.Fail()
+	}
 
-	lisp = New()
 	code = "(a:Hello World!|href:http://example.com) (a:Hello World!|href:http://example.com)"
-	fmt.Println("Input:")
-	fmt.Println(code)
 	str = lisp.Render(code)
-	fmt.Println("Output:")
-	fmt.Println(str)
-	fmt.Println()
+	if str != `<a href="http://example.com">Hello World!</a> <a href="http://example.com">Hello World!</a>` {
+		t.Fail()
+	}
+
+	code = "(a:Hello World!|href:http://example.com)"
+
+	lisp.SetFunc("a", ANoFollow)
+
+	str = lisp.Render(code)
+
+	if str != `<a href="http://example.com" rel="nofollow">Hello World!</a>` {
+		t.Fail()
+	}
 }

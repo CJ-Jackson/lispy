@@ -1,22 +1,27 @@
 package lispy
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestArea(t *testing.T) {
-	fmt.Println("Table Test:\r\n")
-	fmt.Println()
-
 	lisp := New()
-	code := "(map:(area:rect|coords:0,0,82,126|href:sun.htm|alt:Sun)\r\n"
-	code += "(area:circle|coords:90,58,3|href:mercur.htm|alt:Mercury)\r\n"
-	code += "(area:circle|coords:124,58,8|href:venus.htm|alt:Venus))\r\n"
-	fmt.Println("Input:")
-	fmt.Println(code)
+
+	code := "(map:(area:rect|coords:0,0,82,126|href:sun.htm|alt:Sun)"
+	code += "(area:circle|coords:90,58,3|href:mercur.htm|alt:Mercury)"
+	code += "(area:circle|coords:124,58,8|href:venus.htm|alt:Venus))"
+
 	str := lisp.Render(code)
-	fmt.Println("Output:")
-	fmt.Println(str)
-	fmt.Println()
+
+	if str != `<map><area shape="rect" coords="0,0,82,126" href="sun.htm" alt="Sun"/><area shape="circle" coords="90,58,3" href="mercur.htm" alt="Mercury"/><area shape="circle" coords="124,58,8" href="venus.htm" alt="Venus"/></map>` {
+		t.Fail()
+	}
+
+	lisp.SetFunc("area", AreaNoFollow)
+
+	str = lisp.Render(code)
+
+	if str != `<map><area shape="rect" coords="0,0,82,126" href="sun.htm" alt="Sun" rel="nofollow"/><area shape="circle" coords="90,58,3" href="mercur.htm" alt="Mercury" rel="nofollow"/><area shape="circle" coords="124,58,8" href="venus.htm" alt="Venus" rel="nofollow"/></map>` {
+		t.Fail()
+	}
 }

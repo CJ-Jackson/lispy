@@ -1,23 +1,63 @@
 package lispy
 
 func Area(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<area{{if .Exist "shape"}} shape="{{.GetDel "shape"|html}}"{{end}}{{if .Exist "coords"}} coords="{{.GetDel "coords"|html}}"{{end}}{{if .Exist "href"}} href="{{.GetDel "href"|html}}"{{end}}{{if .Exist "alt"}} alt="{{.GetDel "alt"|html}}"{{end}}{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}} />`
-
 	if !li.Exist("shape") {
 		li.Set("shape", li.Content)
 	}
 
-	return li.HtmlRender(htmlstr)
+	str := `<area`
+
+	if li.Exist("shape") {
+		str += ` shape="` + li.GetDel("shape") + `"`
+	}
+
+	if li.Exist("coords") {
+		str += ` coords="` + li.GetDel("coords") + `"`
+	}
+
+	if li.Exist("href") {
+		str += ` href="` + li.GetDel("href") + `"`
+	}
+
+	if li.Exist("alt") {
+		str += ` alt="` + li.GetDel("alt") + `"`
+	}
+
+	str += li.GetParam()
+
+	str += `/>`
+
+	return str
 }
 
 func AreaNoFollow(li *Lispy) string {
-	const htmlstr = `{{$li := .}}<area{{if .Exist "shape"}} shape="{{.GetDel "shape"|html}}"{{end}}{{if .Exist "coords"}} coords="{{.GetDel "coords"|html}}"{{end}}{{if .Exist "href"}} href="{{.GetDel "href"|html}}"{{end}}{{if .Exist "alt"}} alt="{{.GetDel "alt"|html}}"{{end}} rel="nofollow"{{range .GetNames}} {{.|attr}}="{{$li.Get .|html}}"{{end}} />`
-
 	if !li.Exist("shape") {
 		li.Set("shape", li.Content)
 	}
 
-	li.Delete("rel")
+	str := `<area`
 
-	return li.HtmlRender(htmlstr)
+	if li.Exist("shape") {
+		str += ` shape="` + li.GetDel("shape") + `"`
+	}
+
+	if li.Exist("coords") {
+		str += ` coords="` + li.GetDel("coords") + `"`
+	}
+
+	if li.Exist("href") {
+		str += ` href="` + li.GetDel("href") + `"`
+	}
+
+	if li.Exist("alt") {
+		str += ` alt="` + li.GetDel("alt") + `"`
+	}
+
+	str += ` rel="nofollow"`
+
+	str += li.GetParam()
+
+	str += `/>`
+
+	return str
 }
