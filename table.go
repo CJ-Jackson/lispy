@@ -1,10 +1,10 @@
 package lispy
 
 func Table(li *Lispy) string {
-	str := `<table `
+	str := `<table`
 
 	if li.ExistDel("border") {
-		str += `border="1"`
+		str += ` border="1"`
 	}
 
 	str += li.GetParam()
@@ -19,10 +19,10 @@ func Table(li *Lispy) string {
 }
 
 func TableTd(li *Lispy) string {
-	str := `<` + li.Name + ` `
+	str := `<` + li.Name
 
 	if li.Exist("colspan") {
-		str += `colspan="` + li.GetDel("colspan") + `"`
+		str += ` colspan="` + li.GetDel("colspan") + `"`
 	}
 
 	str += li.GetParam()

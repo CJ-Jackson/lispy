@@ -1,13 +1,13 @@
 package lispy
 
 func Details(li *Lispy) string {
-	str := `<details `
+	str := `<details`
 
 	if li.ExistDel("open") {
-		str += `open `
+		str += ` open`
 	}
 
-	str += li.GetParam() + ` >`
+	str += li.GetParam() + `>`
 
 	str += li.Render(li.Content)
 

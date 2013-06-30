@@ -1,38 +1,38 @@
 package lispy
 
 func Video(li *Lispy) string {
-	str := `<video `
+	str := `<video`
 
 	if li.Exist("src") {
-		str += `src="` + li.GetDel("src") + `" `
+		str += ` src="` + li.GetDel("src") + `"`
 	}
 
 	if li.Exist("poster") {
-		str += `poster="` + li.GetDel("poster") + `" `
+		str += ` poster="` + li.GetDel("poster") + `"`
 	}
 
 	if li.Exist("width") {
-		str += `width="` + li.GetDel("width") + `" `
+		str += ` width="` + li.GetDel("width") + `"`
 	}
 
 	if li.Exist("height") {
-		str += `height="` + li.GetDel("height") + `" `
+		str += ` height="` + li.GetDel("height") + `"`
 	}
 
 	if li.ExistRes("autoplay") {
-		str += `autoplay `
+		str += ` autoplay`
 	}
 
 	if li.ExistDel("controls") {
-		str += `controls `
+		str += ` controls`
 	}
 
 	if li.ExistRes("loop") {
-		str += `loop `
+		str += ` loop`
 	}
 
 	if li.ExistDel("muted") {
-		str += `muted `
+		str += ` muted`
 	}
 
 	str += li.GetParam()
@@ -47,22 +47,22 @@ func Video(li *Lispy) string {
 }
 
 func Audio(li *Lispy) string {
-	str := `<audio `
+	str := `<audio`
 
 	if li.Exist("src") {
-		str += `src="` + li.GetDel("src") + `" `
+		str += ` src="` + li.GetDel("src") + `"`
 	}
 
 	if li.ExistRes("autoplay") {
-		str += `autoplay `
+		str += ` autoplay`
 	}
 
 	if li.ExistDel("controls") {
-		str += `controls `
+		str += ` controls`
 	}
 
 	if li.ExistRes("loop") {
-		str += `loop`
+		str += ` loop`
 	}
 
 	str += li.GetParam()
@@ -81,18 +81,18 @@ func Source(li *Lispy) string {
 		li.Set("src", li.Content)
 	}
 
-	str := `<source `
+	str := `<source`
 
 	if li.Exist("src") {
-		str += `src="` + li.GetDel("src") + `" `
+		str += ` src="` + li.GetDel("src") + `"`
 	}
 
 	if li.Exist("media") {
-		str += `media="` + li.GetDel("media") + `" `
+		str += ` media="` + li.GetDel("media") + `"`
 	}
 
 	if li.Exist("type") {
-		str += `type="` + li.GetDel("type") + `"`
+		str += ` type="` + li.GetDel("type") + `"`
 	}
 
 	str += li.GetParam()
@@ -107,26 +107,26 @@ func Track(li *Lispy) string {
 		li.Set("src", li.Content)
 	}
 
-	str := `<track `
+	str := `<track`
 
 	if li.Exist("default") {
-		str += `default="` + li.GetDel("default") + `" `
+		str += ` default="` + li.GetDel("default") + `"`
 	}
 
 	if li.Exist("kind") {
-		str += `kind="` + li.GetDel("kind") + `" `
+		str += ` kind="` + li.GetDel("kind") + `"`
 	}
 
 	if li.Exist("label") {
-		str += `label="` + li.GetDel("label") + `" `
+		str += ` label="` + li.GetDel("label") + `"`
 	}
 
 	if li.Exist("src") {
-		str += `src="` + li.GetDel("src") + `" `
+		str += `src="` + li.GetDel("src") + `"`
 	}
 
 	if li.Exist("srclang") {
-		str += `srclang="` + li.GetDel("srclang") + `" `
+		str += ` srclang="` + li.GetDel("srclang") + `"`
 	}
 
 	str += li.GetParam()

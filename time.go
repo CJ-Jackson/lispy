@@ -1,10 +1,10 @@
 package lispy
 
 func Time(li *Lispy) string {
-	str := `<` + li.Name + ` `
+	str := `<` + li.Name
 
 	if li.Exist("datetime") {
-		str += `datetime="` + li.GetDel("datetime") + `" `
+		str += ` datetime="` + li.GetDel("datetime") + `"`
 	}
 
 	str += li.GetParam()

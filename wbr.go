@@ -10,7 +10,7 @@ func Wbr(li *Lispy) string {
 	}
 	needle := li.Get("needle")
 	switch needle {
-	case "(", ")", "`":
+	case "(", ")":
 		return li.Render(li.Content)
 	}
 	return li.Render(strings.Replace(li.Content, needle, needle+"<wbr>", -1))

@@ -9,7 +9,7 @@ func A(li *Lispy) string {
 		str += li.GetDel("href")
 	}
 
-	str += `" `
+	str += `"`
 
 	str += li.GetParam()
 
@@ -31,7 +31,7 @@ func ANoFollow(li *Lispy) string {
 		str += li.GetDel("href")
 	}
 
-	str += `" rel="nofollow" `
+	str += `" rel="nofollow"`
 
 	str += li.GetParam()
 

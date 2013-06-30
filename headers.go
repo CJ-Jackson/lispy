@@ -1,7 +1,7 @@
 package lispy
 
 func Header(li *Lispy) string {
-	str := `<` + li.Name + ``
+	str := `<` + li.Name
 
 	str += li.GetParam() + `>`
 

@@ -5,15 +5,15 @@ import (
 )
 
 func commonCodeReuse(li *Lispy, names ...string) string {
-	str := `<` + li.Name + ` `
+	str := `<` + li.Name
 
 	for _, name := range names {
 		if li.Exist(name) {
-			str += name + `="` + li.GetDel(name) + `" `
+			str += ` ` + name + `="` + li.GetDel(name) + `"`
 		}
 	}
 
-	str += li.GetParam() + ` >`
+	str += li.GetParam() + `>`
 
 	str += li.Render(li.Content)
 
@@ -83,13 +83,13 @@ func CSS(li *Lispy) string {
 }
 
 func Canvas(li *Lispy) string {
-	str := `<canvas `
+	str := `<canvas`
 
 	if li.Exist("id") {
-		str += `id="` + li.GetDel("id") + `" `
+		str += ` id="` + li.GetDel("id") + `"`
 	}
 
-	str += li.GetParam() + ` >`
+	str += li.GetParam() + `>`
 
 	str += `</canvas>`
 

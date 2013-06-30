@@ -5,18 +5,18 @@ import (
 )
 
 func Ol(li *Lispy) string {
-	str := `<ol `
+	str := `<ol`
 
 	if li.Exist("start") {
-		str += `start="` + fmt.Sprint(li.GetInt64Del("start")) + `" `
+		str += ` start="` + fmt.Sprint(li.GetInt64Del("start")) + `"`
 	}
 
 	if li.Exist("type") {
-		str += `type="` + li.GetDel("type") + `" `
+		str += ` type="` + li.GetDel("type") + `"`
 	}
 
 	if li.ExistDel("reverse") {
-		str += `reverse `
+		str += ` reverse`
 	}
 
 	str += li.GetParam()
