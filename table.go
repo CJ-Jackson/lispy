@@ -19,7 +19,7 @@ func Table(li *Lispy) string {
 }
 
 func TableTd(li *Lispy) string {
-	str := `<td `
+	str := `<` + li.Name + ` `
 
 	if li.Exist("colspan") {
 		str += `colspan="` + li.GetDel("colspan") + `"`
@@ -31,7 +31,7 @@ func TableTd(li *Lispy) string {
 
 	str += li.Render(li.Content)
 
-	str += `</td>`
+	str += `</` + li.Name + `>`
 
 	return str
 }
