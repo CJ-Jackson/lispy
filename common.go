@@ -1,5 +1,9 @@
 package lispy
 
+import (
+	"html"
+)
+
 func commonCodeReuse(li *Lispy, names ...string) string {
 	str := `<` + li.Name + ` `
 
@@ -108,4 +112,8 @@ func Escape(li *Lispy) string {
 
 func Raw(li *Lispy) string {
 	return li.RawContent()
+}
+
+func EscapedHtml(li *Lispy) string {
+	return html.EscapeString(li.Render(li.Content))
 }
