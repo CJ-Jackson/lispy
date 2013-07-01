@@ -111,7 +111,7 @@ func Textarea(li *Lispy) string {
 
 	str += `>`
 
-	str += li.RawContentExt()
+	str += li.Content
 
 	str += `</textarea>`
 
