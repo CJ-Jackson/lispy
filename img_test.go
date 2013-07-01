@@ -1,28 +1,22 @@
 package lispy
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestImg(t *testing.T) {
-	fmt.Println("Img Test:\r\n")
-	fmt.Println()
-
 	lisp := New()
 	code := "(img:http://example.com/img.png)"
-	fmt.Println("Input:")
-	fmt.Println(code)
 	str := lisp.Render(code)
-	fmt.Println("Output:")
-	fmt.Println(str)
-	fmt.Println()
+
+	if str != `<img src="http://example.com/img.png" alt="" title=""/>` {
+		t.Fail()
+	}
 
 	code = "(a:(img:http://example.com/img.png)|href:http://example.com)"
-	fmt.Println("Input:")
-	fmt.Println(code)
 	str = lisp.Render(code)
-	fmt.Println("Output:")
-	fmt.Println(str)
-	fmt.Println()
+
+	if str != `<a href="http://example.com"><img src="http://example.com/img.png" alt="" title=""/></a>` {
+		t.Fail()
+	}
 }

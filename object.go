@@ -1,7 +1,7 @@
 package lispy
 
 func Object(li *Lispy) string {
-	str := `<object `
+	str := `<object`
 
 	if li.Exist("width") {
 		str += ` width="` + li.GetDel("width") + `"`
@@ -45,6 +45,10 @@ func Param(li *Lispy) string {
 }
 
 func Embed(li *Lispy) string {
+	if !li.Exist("src") {
+		li.Set("src", li.Content)
+	}
+
 	str := `<embed`
 
 	if li.Exist("src") {

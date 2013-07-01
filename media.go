@@ -122,7 +122,7 @@ func Track(li *Lispy) string {
 	}
 
 	if li.Exist("src") {
-		str += `src="` + li.GetDel("src") + `"`
+		str += ` src="` + li.GetDel("src") + `"`
 	}
 
 	if li.Exist("srclang") {
