@@ -2,7 +2,6 @@
 package lispy
 
 import (
-	"fmt"
 	_html "html"
 	html "html/template"
 	"sort"
@@ -555,7 +554,7 @@ func (li *Lispy) GetParam() string {
 	str := ""
 
 	for _, name := range li.GetNames() {
-		str += fmt.Sprintf(` %s="%s"`, name, li.Get(name))
+		str += " " + name + `="` + li.Get(name) + `"`
 	}
 
 	return str
