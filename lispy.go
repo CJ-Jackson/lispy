@@ -2,7 +2,6 @@
 package lispy
 
 import (
-	"bytes"
 	"fmt"
 	_html "html"
 	html "html/template"
@@ -560,58 +559,6 @@ func (li *Lispy) GetParam() string {
 	}
 
 	return str
-}
-
-var _templateCache = struct {
-	sync.RWMutex
-	c map[string]*html.Template
-}{
-	c: map[string]*html.Template{},
-}
-
-// HTML Render
-func (li *Lispy) HtmlRender(htmlstr string) string {
-	if li.CacheName == "" {
-		li.CacheName = li.Name
-	}
-
-	buf := &bytes.Buffer{}
-	defer buf.Reset()
-
-	var err error
-
-	_templateCache.RLock()
-	t := _templateCache.c[li.CacheName]
-	_templateCache.RUnlock()
-	if t == nil {
-		t, err = html.New("html").Funcs(html.FuncMap{
-			"html": func(str string) html.HTML {
-				return html.HTML(str)
-			},
-			"css": func(str string) html.CSS {
-				return html.CSS(str)
-			},
-			"js": func(str string) html.JS {
-				return html.JS(str)
-			},
-			"attr": func(str string) html.HTMLAttr {
-				return html.HTMLAttr(str)
-			},
-		}).Parse(htmlstr)
-		if err != nil {
-			buf.WriteString(err.Error())
-			return buf.String()
-		}
-		_templateCache.Lock()
-		_templateCache.c[li.CacheName] = t
-		_templateCache.Unlock()
-	}
-
-	err = t.Execute(buf, li)
-	if err != nil {
-		buf.WriteString(err.Error())
-	}
-	return buf.String()
 }
 
 // Restrict Parameter, useful for comment system.
