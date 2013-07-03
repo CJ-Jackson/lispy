@@ -9,8 +9,12 @@ func Wbr(li *Lispy) string {
 		return "<wbr>"
 	}
 	needle := li.Get("needle")
+	if len(needle) <= 0 || len(needle) > 1 {
+		return li.Render(li.Content)
+	}
+
 	switch needle {
-	case "(", ")":
+	case "(", ")", ":", "|":
 		return li.Render(li.Content)
 	}
 	return li.Render(strings.Replace(li.Content, needle, needle+"<wbr>", -1))
