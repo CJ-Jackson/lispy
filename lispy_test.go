@@ -61,21 +61,4 @@ func TestLispCode(t *testing.T) {
 	if str != "&lt;test /&gt;" {
 		t.Fail()
 	}
-
-	lisp.DisableAutoEscape()
-
-	str = lisp.Render(code)
-
-	if str != "<test />" {
-		t.Fail()
-	}
-
-	lisp = New()
-	lisp.EnableAutoLineBreak()
-	code = "hello\r\n\r\n"
-	str = lisp.Render(code)
-
-	if str != "hello<br /><br />" {
-		t.Fail()
-	}
 }

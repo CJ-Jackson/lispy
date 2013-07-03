@@ -71,7 +71,6 @@ type Lispy struct {
 	param         map[string][]string
 	code          lispyMap
 	first         bool
-	linebreak     bool
 	paramParsed   bool
 }
 
@@ -87,7 +86,6 @@ func New() *Lispy {
 		param:         map[string][]string{},
 		code:          lispyMap{},
 		first:         true,
-		linebreak:     false,
 		paramParsed:   false,
 	}
 
@@ -174,7 +172,7 @@ func (li *Lispy) nameAllowed() bool {
 }
 
 type previousState struct {
-	htmlEscape, first, linebreak bool
+	htmlEscape, first bool
 }
 
 type openclose struct {
@@ -214,18 +212,11 @@ func (li *Lispy) Render(str string) string {
 		return str
 	}
 
-	previous := previousState{li.htmlEscape, li.first, li.linebreak}
+	previous := previousState{li.htmlEscape, li.first}
 
 	if li.htmlEscape {
 		str = html.HTMLEscapeString(str)
 		li.htmlEscape = false
-	}
-
-	if li.linebreak {
-		str = strings.Replace(str, "\r\n", "<br />", -1)
-		str = strings.Replace(str, "\r", "<br />", -1)
-		str = strings.Replace(str, "\n", "<br />", -1)
-		li.linebreak = false
 	}
 
 	if li.first {
@@ -317,7 +308,6 @@ func (li *Lispy) Render(str string) string {
 	// Restore previous state
 	li.htmlEscape = previous.htmlEscape
 	li.first = previous.first
-	li.linebreak = previous.linebreak
 
 	if li.first {
 		processedStr = unescape(processedStr)
@@ -335,6 +325,7 @@ func unescape(str string) string {
 	str = strings.Replace(str, "&#58;", ":", -1)
 	str = strings.Replace(str, "&#40;", "(", -1)
 	str = strings.Replace(str, "&#41;", ")", -1)
+	str = strings.Replace(str, string([]byte{0, 0, 0, 0, 0}), "<br />", -1)
 	return str
 }
 
@@ -415,7 +406,11 @@ func (li *Lispy) parseParam() {
 
 func (li *Lispy) filters() {
 	filters := li.Get("~filters")
+	if filters == "" {
+		li.Get("~")
+	}
 	li.Delete("~filters")
+	li.Delete("~")
 	if filters == "" {
 		return
 	}
@@ -426,9 +421,9 @@ func (li *Lispy) filters() {
 		filter = strings.TrimSpace(filter)
 		switch filter {
 		case "line":
-			li.Content = strings.Replace(li.Content, "\r\n", "(br:)", -1)
-			li.Content = strings.Replace(li.Content, "\r", "(br:)", -1)
-			li.Content = strings.Replace(li.Content, "\n", "(br:)", -1)
+			li.Content = strings.Replace(li.Content, "\r\n", string([]byte{0, 0, 0, 0, 0}), -1)
+			li.Content = strings.Replace(li.Content, "\r", string([]byte{0, 0, 0, 0, 0}), -1)
+			li.Content = strings.Replace(li.Content, "\n", string([]byte{0, 0, 0, 0, 0}), -1)
 		case "tab":
 			li.Content = strings.Replace(li.Content, "\t", "&nbsp;&nbsp;", -1)
 		}
@@ -586,18 +581,6 @@ func (li *Lispy) ContentAsInt64() int64 {
 		num = 0
 	}
 	return num
-}
-
-// Disable Automatic HTML Escape
-//
-// Note: It's recommended that you don't disable that!
-func (li *Lispy) DisableAutoEscape() {
-	li.htmlEscape = false
-}
-
-// Enable Automatic Line Break, useful for comment system.
-func (li *Lispy) EnableAutoLineBreak() {
-	li.linebreak = true
 }
 
 // Unescaped Content
