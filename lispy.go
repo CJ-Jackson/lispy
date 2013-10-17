@@ -17,7 +17,7 @@ const (
 	closeRune = rune(')')
 )
 
-type lispyMap map[string][]LispyHandler
+type lispyMap map[string]LispyHandler
 
 func (li lispyMap) Set(name string, function LispyFunc) {
 	li.SetHandler(name, function)
@@ -25,11 +25,10 @@ func (li lispyMap) Set(name string, function LispyFunc) {
 
 func (li lispyMap) SetHandler(name string, lispyhandler LispyHandler) {
 	name = strings.TrimSpace(strings.ToLower(name))
-	if len(li[name]) <= 0 {
-		li[name] = append(li[name], lispyhandler)
-	} else {
-		li[name][0] = lispyhandler
+	if name == "br" {
+		return
 	}
+	li[name] = lispyhandler
 }
 
 // Lispy Map
@@ -67,9 +66,10 @@ type Lispy struct {
 	CacheName     string
 	htmlEscape    bool
 	restrictParam bool
-	allowedNames  []string
+	allowedNames  map[string]bool
 	param         map[string][]string
 	code          lispyMap
+	defaultCode   LispyHandlerMap
 	first         bool
 	paramParsed   bool
 }
@@ -82,18 +82,18 @@ func New() *Lispy {
 		CacheName:     "",
 		htmlEscape:    true,
 		restrictParam: false,
-		allowedNames:  []string{},
 		param:         map[string][]string{},
 		code:          lispyMap{},
+		defaultCode:   LispyHandlerMap{},
 		first:         true,
 		paramParsed:   false,
 	}
 
-	DefaultMap.RLock()
+	DefaultMap.Lock()
 
-	li.AddFuncMap(DefaultMap.Map).AddHandlerMap(DefaultMap.HandlerMap)
+	li.defaultCode = DefaultMap.Map
 
-	DefaultMap.RUnlock()
+	DefaultMap.Unlock()
 
 	return li
 }
@@ -158,17 +158,11 @@ func (li *Lispy) Safe(str string) html.HTML {
 }
 
 func (li *Lispy) nameAllowed() bool {
-	if len(li.allowedNames) <= 0 {
+	if li.allowedNames == nil {
 		return true
 	}
 
-	for _, name := range li.allowedNames {
-		if name == li.Name {
-			return true
-		}
-	}
-
-	return false
+	return li.allowedNames[li.Name]
 }
 
 type previousState struct {
@@ -206,7 +200,6 @@ func (li *Lispy) RenderSafe(str string) html.HTML {
 // Render Syntax from String, returns rendered String
 func (li *Lispy) Render(str string) string {
 	li = li.Copy()
-	li.SetFunc("br", Br)
 
 	if li.code == nil {
 		return str
@@ -286,10 +279,15 @@ func (li *Lispy) Render(str string) string {
 
 		li.Content = li.Content[:content_lenght]
 
-		if len(li.code[li.Name]) <= 0 || !li.nameAllowed() {
+		ccode := li.code[li.Name]
+		if ccode == nil {
+			ccode = li.defaultCode[li.Name]
+		}
+
+		if ccode == nil || !li.nameAllowed() {
 			processedStr += str[:pos] + li.Content
 		} else {
-			processedStr += str[:pos] + li.code[li.Name][0].Lispy(li)
+			processedStr += str[:pos] + ccode.Lispy(li)
 			li.param = map[string][]string{}
 		}
 
@@ -571,7 +569,13 @@ func (li *Lispy) RestrictAttribute() {
 //
 // Note: All tags are enabled by default.
 func (li *Lispy) AllowTags(names ...string) {
-	li.allowedNames = append(li.allowedNames, names...)
+	if li.allowedNames == nil {
+		li.allowedNames = map[string]bool{}
+	}
+
+	for _, name := range names {
+		li.allowedNames[name] = true
+	}
 }
 
 // Get Content as Int64, return 0 on fail!
